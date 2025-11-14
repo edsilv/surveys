@@ -6,6 +6,8 @@ What is your name?
 
 Text
 
+--
+
 ## Title
 
 Why do you want this position?
@@ -13,6 +15,8 @@ Why do you want this position?
 ## Type
 
 Textarea
+
+--
 
 ## Title
 
@@ -26,11 +30,13 @@ Multiple Choice
 
 - Male
 - Female
-- Other
+- Non-binary
+
+--
 
 ## Title
 
-What are your skills?
+Which coding languages are you proficient in?
 
 ## Type
 
@@ -39,8 +45,11 @@ Multiple Select
 ## Options
 
 - JavaScript
+- TypeScript
 - Python
 - C#
+
+--
 
 ## Title
 
@@ -52,9 +61,19 @@ Multiple Select with Other
 
 ## Options
 
-- Word of mouth
+- Company website
+- Job board (Indeed, LinkedIn, Reed, etc)
 - Social media
-- Email
+- Recruitment agency
+- University or careers service
+- Professional network
+- Personal recommendation
+- Industry event or conference
+- Newsletter or mailing list
+- Search engine
+- Other
+
+--
 
 ## Title
 
@@ -68,6 +87,8 @@ Rating
 
 5
 
+--
+
 ## Title
 
 Are you eligible to work in the UK?
@@ -75,6 +96,8 @@ Are you eligible to work in the UK?
 ## Type
 
 Yes/No
+
+--
 
 ## Title
 
