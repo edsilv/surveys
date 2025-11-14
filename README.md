@@ -72,3 +72,31 @@ src/
 │   └── hooks.ts                 # Typed Redux hooks
 └── components/                  # Reusable UI components
 ```
+
+## AI/ML Enhancement Opportunities
+
+### Sentiment Analysis
+
+Analyse open-text responses to automatically gauge emotional tone (positive, negative, neutral). This would enable administrators to:
+
+- Quickly identify concerning or highly positive feedback requiring immediate attention
+- Track sentiment trends across different survey periods or demographic groups
+- Prioritise responses for manual review based on sentiment scores
+
+### Theme Extraction
+
+Use Natural Language Processing to identify common themes and topics across multiple text responses. Benefits include:
+
+- Automatic categorisation of feedback without manual coding
+- Discovery of unexpected patterns or concerns not explicitly asked about
+- Generation of word clouds and topic summaries for executive reporting
+
+### Conversational Analytics
+
+Provide a chatbot interface allowing administrators to query survey data using natural language:
+
+- "What were the most common complaints in the last employee survey?"
+- "Show me all responses from users who rated us below 3 stars"
+- "Summarise the feedback from the London office"
+
+The queryable database structure (individual ResponseItems records) makes this particularly feasible, as complex SQL queries can be generated from natural language inputs and executed against the normalised schema.

@@ -65,7 +65,6 @@ Multiple Select with Other
 - Job board (Indeed, LinkedIn, Reed, etc)
 - Social media
 - Recruitment agency
-- University or careers service
 - Professional network
 - Personal recommendation
 - Industry event or conference
