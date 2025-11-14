@@ -64,11 +64,17 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
+    members: MemberAuthOperations;
   };
   blocks: {};
   collections: {
     users: User;
     media: Media;
+    members: Member;
+    questions: Question;
+    surveys: Survey;
+    'survey-responses': SurveyResponse;
+    'response-items': ResponseItem;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +84,11 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    members: MembersSelect<false> | MembersSelect<true>;
+    questions: QuestionsSelect<false> | QuestionsSelect<true>;
+    surveys: SurveysSelect<false> | SurveysSelect<true>;
+    'survey-responses': SurveyResponsesSelect<false> | SurveyResponsesSelect<true>;
+    'response-items': ResponseItemsSelect<false> | ResponseItemsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -89,15 +100,37 @@ export interface Config {
   globals: {};
   globalsSelect: {};
   locale: null;
-  user: User & {
-    collection: 'users';
-  };
+  user:
+    | (User & {
+        collection: 'users';
+      })
+    | (Member & {
+        collection: 'members';
+      });
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
 export interface UserAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
+export interface MemberAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -160,6 +193,172 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "members".
+ */
+export interface Member {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "questions".
+ */
+export interface Question {
+  id: number;
+  type:
+    | 'text'
+    | 'textarea'
+    | 'multiple_choice'
+    | 'multiple_select'
+    | 'multiple_select_with_other'
+    | 'rating'
+    | 'yes_no';
+  label: string;
+  /**
+   * Unique identifier for this question (used in responses)
+   */
+  name: string;
+  options?:
+    | {
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Maximum rating value (e.g., 5 for 1-5 scale)
+   */
+  scale?: number | null;
+  validation?: {
+    required?: boolean | null;
+    minLength?: number | null;
+    maxLength?: number | null;
+    minChoices?: number | null;
+    maxChoices?: number | null;
+  };
+  /**
+   * Conditional display based on another question
+   */
+  condition?: {
+    /**
+     * Name of the question this depends on
+     */
+    name?: string | null;
+    /**
+     * Value that triggers this question to display
+     */
+    value?:
+      | {
+          [k: string]: unknown;
+        }
+      | unknown[]
+      | string
+      | number
+      | boolean
+      | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "surveys".
+ */
+export interface Survey {
+  id: number;
+  title: string;
+  description?: string | null;
+  questions: {
+    question: number | Question;
+    /**
+     * Order in which the question appears in the survey
+     */
+    order: number;
+    id?: string | null;
+  }[];
+  /**
+   * Members who can access and complete this survey
+   */
+  members?: (number | Member)[] | null;
+  /**
+   * Whether this survey is currently accepting responses
+   */
+  active?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-responses".
+ */
+export interface SurveyResponse {
+  id: number;
+  survey: number | Survey;
+  /**
+   * The member who completed this survey
+   */
+  member: number | Member;
+  completed?: boolean | null;
+  completedAt?: string | null;
+  /**
+   * Email or identifier of the person who submitted the survey (denormalized from member)
+   */
+  submittedBy?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "response-items".
+ */
+export interface ResponseItem {
+  id: number;
+  surveyResponse: number | SurveyResponse;
+  question: number | Question;
+  /**
+   * Denormalized question name for easier querying
+   */
+  questionName: string;
+  /**
+   * Denormalized question type for easier querying
+   */
+  questionType:
+    | 'text'
+    | 'textarea'
+    | 'multiple_choice'
+    | 'multiple_select'
+    | 'multiple_select_with_other'
+    | 'rating'
+    | 'yes_no';
+  textValue?: string | null;
+  numberValue?: number | null;
+  booleanValue?: boolean | null;
+  arrayValue?:
+    | {
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -189,12 +388,37 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'members';
+        value: number | Member;
+      } | null)
+    | ({
+        relationTo: 'questions';
+        value: number | Question;
+      } | null)
+    | ({
+        relationTo: 'surveys';
+        value: number | Survey;
+      } | null)
+    | ({
+        relationTo: 'survey-responses';
+        value: number | SurveyResponse;
+      } | null)
+    | ({
+        relationTo: 'response-items';
+        value: number | ResponseItem;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'members';
+        value: number | Member;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -204,10 +428,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'members';
+        value: number | Member;
+      };
   key?: string | null;
   value?:
     | {
@@ -271,6 +500,114 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "members_select".
+ */
+export interface MembersSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "questions_select".
+ */
+export interface QuestionsSelect<T extends boolean = true> {
+  type?: T;
+  label?: T;
+  name?: T;
+  options?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  scale?: T;
+  validation?:
+    | T
+    | {
+        required?: T;
+        minLength?: T;
+        maxLength?: T;
+        minChoices?: T;
+        maxChoices?: T;
+      };
+  condition?:
+    | T
+    | {
+        name?: T;
+        value?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "surveys_select".
+ */
+export interface SurveysSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  questions?:
+    | T
+    | {
+        question?: T;
+        order?: T;
+        id?: T;
+      };
+  members?: T;
+  active?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "survey-responses_select".
+ */
+export interface SurveyResponsesSelect<T extends boolean = true> {
+  survey?: T;
+  member?: T;
+  completed?: T;
+  completedAt?: T;
+  submittedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "response-items_select".
+ */
+export interface ResponseItemsSelect<T extends boolean = true> {
+  surveyResponse?: T;
+  question?: T;
+  questionName?: T;
+  questionType?: T;
+  textValue?: T;
+  numberValue?: T;
+  booleanValue?: T;
+  arrayValue?:
+    | T
+    | {
+        value?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
