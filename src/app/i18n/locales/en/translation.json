@@ -69,7 +69,11 @@
     "untitled": "Untitled",
     "noDescription": "No description available",
     "created": "Created",
-    "thumbnailAlt": "thumbnail"
+    "thumbnailAlt": "thumbnail",
+    "surveys": {
+      "created": "Created",
+      "invitedTo": "Surveys You're Invited To"
+    }
   },
   "common": {
     "save": "Save",
