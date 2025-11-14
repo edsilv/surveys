@@ -76,7 +76,7 @@ export default function SignupForm(): ReactElement {
 
   return (
     <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8">
-      <Card className="w-full max-w-sm bg-gray-50">
+      <Card className="w-full max-w-sm">
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-3xl">{t('auth.signup.title')}</CardTitle>
           <CardDescription className="text-center">{t('auth.signup.description')}</CardDescription>

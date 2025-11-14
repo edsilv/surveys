@@ -74,7 +74,7 @@ export default function LoginForm(): ReactElement {
 
   return (
     <div className="flex min-h-full flex-col items-center justify-center px-6 py-12 lg:px-8">
-      <Card className="w-full max-w-sm bg-gray-50">
+      <Card className="w-full max-w-sm">
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-3xl">{t('auth.login.title')}</CardTitle>
           <CardDescription className="text-center">{t('auth.login.description')}</CardDescription>
@@ -95,9 +95,9 @@ export default function LoginForm(): ReactElement {
             </Button>
           </form>
           <p className="text-muted-foreground mt-6 text-center text-sm">
-            {t('auth.login.signupLink').split(' ')[0]}{' '}
+            {t('auth.login.signupLink.text')}{' '}
             <Link href={`/signup`} className="text-primary font-medium hover:underline">
-              {t('navigation.signup')}
+              {t('auth.login.signupLink.link')}
             </Link>
           </p>
         </CardContent>

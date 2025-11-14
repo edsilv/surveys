@@ -2,7 +2,7 @@
   "navigation": {
     "home": "Home",
     "dashboard": "Dashboard",
-    "login": "Login",
+    "signin": "Sign In",
     "signup": "Sign Up",
     "logout": "Logout"
   },
@@ -10,6 +10,14 @@
     "name": "Survey Demo",
     "dashboard": "Dashboard",
     "login": "Login"
+  },
+  "home": {
+    "welcome": "Welcome to the Survey Demo Application",
+    "description": {
+      "text": "Create and manage surveys with ease.",
+      "or": "or",
+      "getStarted": "to get started"
+    }
   },
   "auth": {
     "login": {
@@ -19,7 +27,10 @@
       "password": "Password",
       "submitButton": "Sign In",
       "submitting": "Signing in...",
-      "signupLink": "Don't have an account? Sign up",
+      "signupLink": {
+        "text": "Don't have an account?",
+        "link": "Sign up"
+      },
       "errors": {
         "invalidCredentials": "Invalid email or password",
         "userNotFound": "User not found",
