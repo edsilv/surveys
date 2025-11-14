@@ -1,0 +1,80 @@
+{
+  "navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout"
+  },
+  "header": {
+    "name": "Survey Demo",
+    "dashboard": "Dashboard",
+    "login": "Login"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to your account",
+      "description": "Enter your email and password to access your dashboard",
+      "email": "Email",
+      "password": "Password",
+      "submitButton": "Sign In",
+      "submitting": "Signing in...",
+      "signupLink": "Don't have an account? Sign up",
+      "errors": {
+        "invalidCredentials": "Invalid email or password",
+        "userNotFound": "User not found",
+        "unexpectedError": "An unexpected error occurred",
+        "loginFailed": "Login failed",
+        "networkError": "Network error. Please check your connection and try again."
+      }
+    },
+    "signup": {
+      "title": "Create your account",
+      "description": "Enter your information to get started",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "submitButton": "Sign Up",
+      "loginLink": "Already have an account? Sign in",
+      "errors": {
+        "passwordMismatch": "Passwords do not match",
+        "emailExists": "Email already exists",
+        "unexpectedError": "An unexpected error occurred",
+        "signupFailed": "Signup failed",
+        "validationError": "Please check your input and try again",
+        "networkError": "Network error. Please check your connection and try again.",
+        "submitting": "Creating account..."
+      }
+    },
+    "logout": {
+      "button": "Logout",
+      "submitting": "Logging out...",
+      "failed": "Logout failed"
+    }
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "loading": "Loading...",
+    "untitled": "Untitled",
+    "noDescription": "No description available",
+    "created": "Created",
+    "thumbnailAlt": "thumbnail"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "warning": "Warning",
+    "info": "Information"
+  }
+}
