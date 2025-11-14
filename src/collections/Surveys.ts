@@ -1,4 +1,5 @@
 import type { CollectionConfig } from 'payload';
+import { slugField } from '@/fields/slug';
 
 export const Surveys: CollectionConfig = {
   slug: 'surveys',
@@ -11,6 +12,11 @@ export const Surveys: CollectionConfig = {
       type: 'text',
       required: true,
     },
+    ...slugField('title', {
+      slugOverrides: {
+        unique: true,
+      },
+    }),
     {
       name: 'description',
       type: 'textarea',
@@ -26,15 +32,6 @@ export const Surveys: CollectionConfig = {
           type: 'relationship',
           relationTo: 'questions',
           required: true,
-        },
-        {
-          name: 'order',
-          type: 'number',
-          required: true,
-          defaultValue: 0,
-          admin: {
-            description: 'Order in which the question appears in the survey',
-          },
         },
       ],
     },

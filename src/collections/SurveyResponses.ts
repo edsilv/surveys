@@ -40,7 +40,7 @@ export const SurveyResponses: CollectionConfig = {
       type: 'text',
       index: true,
       admin: {
-        description: 'Email or identifier of the person who submitted the survey (denormalized from member)',
+        description: 'Email or identifier of the person who submitted the survey',
       },
     },
   ],

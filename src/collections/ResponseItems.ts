@@ -13,6 +13,9 @@ export const ResponseItems: CollectionConfig = {
       relationTo: 'survey-responses',
       required: true,
       index: true,
+      admin: {
+        readOnly: true,
+      },
     },
     {
       name: 'question',
@@ -20,14 +23,17 @@ export const ResponseItems: CollectionConfig = {
       relationTo: 'questions',
       required: true,
       index: true,
+      admin: {
+        readOnly: true,
+      },
     },
     {
-      name: 'questionName',
+      name: 'questionSlug',
       type: 'text',
       required: true,
       index: true,
       admin: {
-        description: 'Denormalized question name for easier querying',
+        readOnly: true,
       },
     },
     {
@@ -45,7 +51,7 @@ export const ResponseItems: CollectionConfig = {
         { label: 'Yes/No', value: 'yes_no' },
       ],
       admin: {
-        description: 'Denormalized question type for easier querying',
+        readOnly: true,
       },
     },
     {
@@ -55,6 +61,7 @@ export const ResponseItems: CollectionConfig = {
         condition: (data) => {
           return ['text', 'textarea', 'multiple_choice'].includes(data.questionType);
         },
+        readOnly: true,
       },
       index: true,
     },
@@ -63,6 +70,7 @@ export const ResponseItems: CollectionConfig = {
       type: 'number',
       admin: {
         condition: (data) => data.questionType === 'rating',
+        readOnly: true,
       },
       index: true,
     },
@@ -71,6 +79,7 @@ export const ResponseItems: CollectionConfig = {
       type: 'checkbox',
       admin: {
         condition: (data) => data.questionType === 'yes_no',
+        readOnly: true,
       },
       index: true,
     },
@@ -81,6 +90,7 @@ export const ResponseItems: CollectionConfig = {
         condition: (data) => {
           return ['multiple_select', 'multiple_select_with_other'].includes(data.questionType);
         },
+        readOnly: true,
       },
       fields: [
         {

@@ -1,11 +1,22 @@
 import type { CollectionConfig } from 'payload';
+import { slugField } from '@/fields/slug';
 
 export const Questions: CollectionConfig = {
   slug: 'questions',
   admin: {
-    useAsTitle: 'label',
+    useAsTitle: 'title',
   },
   fields: [
+    {
+      name: 'title',
+      type: 'text',
+      required: true,
+    },
+    ...slugField('title', {
+      slugOverrides: {
+        unique: true,
+      },
+    }),
     {
       name: 'type',
       type: 'select',
@@ -19,19 +30,6 @@ export const Questions: CollectionConfig = {
         { label: 'Rating', value: 'rating' },
         { label: 'Yes/No', value: 'yes_no' },
       ],
-    },
-    {
-      name: 'label',
-      type: 'text',
-      required: true,
-    },
-    {
-      name: 'name',
-      type: 'text',
-      required: true,
-      admin: {
-        description: 'Unique identifier for this question (used in responses)',
-      },
     },
     {
       name: 'options',
@@ -112,10 +110,10 @@ export const Questions: CollectionConfig = {
       },
       fields: [
         {
-          name: 'name',
+          name: 'slug',
           type: 'text',
           admin: {
-            description: 'Name of the question this depends on',
+            description: 'Slug of the question this depends on',
           },
         },
         {

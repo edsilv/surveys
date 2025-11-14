@@ -82,7 +82,7 @@ export default buildConfig({
       },
     },
     {
-      path: '/surveys/:id/complete',
+      path: '/survey-complete/:id',
       method: 'post',
       handler: async (req) => {
         const surveyId = req.routeParams?.id as string;

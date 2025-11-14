@@ -11,11 +11,11 @@ const Header: React.FC = () => {
     <header className="sticky top-0 z-50 border-b bg-white">
       <div className="layout-container flex items-center justify-between px-4 py-4">
         <div>
-          <Link href={`/`} className="pr-2 text-xl font-semibold hover:text-gray-400">
+          <Link href={`/`} className="text-xl font-semibold hover:text-gray-400">
             {t('header.name')}
           </Link>
-          /
-          <Link href="/dashboard" className="pl-2 text-xl font-semibold hover:text-gray-400">
+          <span className="px-2 font-semibold">/</span>
+          <Link href="/dashboard" className="text-xl font-semibold hover:text-gray-400">
             {t('navigation.dashboard')}
           </Link>
         </div>

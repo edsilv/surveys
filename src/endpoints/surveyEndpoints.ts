@@ -14,11 +14,15 @@ function validateResponse(
   value: unknown,
   allResponses: Record<string, unknown>,
 ): ValidationError | null {
-  const { name, type, validation } = question;
+  const { slug, type, validation, title } = question;
+
+  if (!slug) return null;
+
+  const displayName = title || slug;
 
   // Check if question should be displayed based on conditions
-  if (question.condition?.name) {
-    const conditionValue = allResponses[question.condition.name];
+  if (question.condition?.slug) {
+    const conditionValue = allResponses[question.condition.slug];
     if (conditionValue !== question.condition.value) {
       // Question is hidden, so it's optional
       return null;
@@ -28,11 +32,11 @@ function validateResponse(
   // Required validation
   if (validation?.required) {
     if (value === undefined || value === null || value === '') {
-      return { field: name, message: `${name} is required` };
+      return { field: slug, message: `${displayName} is required` };
     }
 
     if (Array.isArray(value) && value.length === 0) {
-      return { field: name, message: `${name} requires at least one selection` };
+      return { field: slug, message: `${displayName} requires at least one selection` };
     }
   }
 
@@ -46,20 +50,20 @@ function validateResponse(
     case 'text':
     case 'textarea': {
       if (typeof value !== 'string') {
-        return { field: name, message: `${name} must be a string` };
+        return { field: slug, message: `${displayName} must be a string` };
       }
 
       if (validation?.minLength && value.length < validation.minLength) {
         return {
-          field: name,
-          message: `${name} must be at least ${validation.minLength} characters`,
+          field: slug,
+          message: `${displayName} must be at least ${validation.minLength} characters`,
         };
       }
 
       if (validation?.maxLength && value.length > validation.maxLength) {
         return {
-          field: name,
-          message: `${name} must be no more than ${validation.maxLength} characters`,
+          field: slug,
+          message: `${displayName} must be no more than ${validation.maxLength} characters`,
         };
       }
       break;
@@ -67,12 +71,12 @@ function validateResponse(
 
     case 'multiple_choice': {
       if (typeof value !== 'string') {
-        return { field: name, message: `${name} must be a string` };
+        return { field: slug, message: `${displayName} must be a string` };
       }
 
       const validOptions = question.options?.map((opt) => opt.value) || [];
       if (!validOptions.includes(value)) {
-        return { field: name, message: `${name} must be one of: ${validOptions.join(', ')}` };
+        return { field: slug, message: `${displayName} must be one of: ${validOptions.join(', ')}` };
       }
       break;
     }
@@ -80,20 +84,20 @@ function validateResponse(
     case 'multiple_select':
     case 'multiple_select_with_other': {
       if (!Array.isArray(value)) {
-        return { field: name, message: `${name} must be an array` };
+        return { field: slug, message: `${displayName} must be an array` };
       }
 
       if (validation?.minChoices && value.length < validation.minChoices) {
         return {
-          field: name,
-          message: `${name} requires at least ${validation.minChoices} selection(s)`,
+          field: slug,
+          message: `${displayName} requires at least ${validation.minChoices} selection(s)`,
         };
       }
 
       if (validation?.maxChoices && value.length > validation.maxChoices) {
         return {
-          field: name,
-          message: `${name} allows no more than ${validation.maxChoices} selection(s)`,
+          field: slug,
+          message: `${displayName} allows no more than ${validation.maxChoices} selection(s)`,
         };
       }
 
@@ -102,11 +106,13 @@ function validateResponse(
 
       for (const item of value) {
         if (typeof item !== 'string') {
-          return { field: name, message: `${name} values must be strings` };
+          return { field: slug, message: `${displayName} values must be strings` };
         }
 
-        if (!validOptions.includes(item) && (!allowOther || item !== 'Other')) {
-          return { field: name, message: `${name} contains invalid option: ${item}` };
+        // For multiple_select (without other), all values must be from predefined options
+        // For multiple_select_with_other, allow any string value (predefined or custom "other" text)
+        if (!allowOther && !validOptions.includes(item)) {
+          return { field: slug, message: `${displayName} contains invalid option: ${item}` };
         }
       }
       break;
@@ -114,13 +120,13 @@ function validateResponse(
 
     case 'rating': {
       if (typeof value !== 'number') {
-        return { field: name, message: `${name} must be a number` };
+        return { field: slug, message: `${displayName} must be a number` };
       }
 
       if (value < 1 || value > (question.scale || 5)) {
         return {
-          field: name,
-          message: `${name} must be between 1 and ${question.scale || 5}`,
+          field: slug,
+          message: `${displayName} must be between 1 and ${question.scale || 5}`,
         };
       }
       break;
@@ -128,7 +134,7 @@ function validateResponse(
 
     case 'yes_no': {
       if (typeof value !== 'boolean') {
-        return { field: name, message: `${name} must be a boolean` };
+        return { field: slug, message: `${displayName} must be a boolean` };
       }
       break;
     }
@@ -144,7 +150,8 @@ export function validateSurveyResponses(questions: Question[], responses: Record
   const errors: ValidationError[] = [];
 
   for (const question of questions) {
-    const value = responses[question.name];
+    if (!question.slug) continue;
+    const value = responses[question.slug];
     const error = validateResponse(question, value, responses);
     if (error) {
       errors.push(error);
@@ -159,6 +166,9 @@ export function validateSurveyResponses(questions: Question[], responses: Record
  */
 export async function getSurvey(payload: Payload, surveyId: string, request?: PayloadRequest) {
   try {
+    // Get authenticated user from request
+    const user = request?.user;
+
     const survey = await payload.findByID({
       collection: 'surveys',
       id: surveyId,
@@ -182,15 +192,15 @@ export async function getSurvey(payload: Payload, surveyId: string, request?: Pa
     // Check if survey is restricted to specific members
     if (survey.members && Array.isArray(survey.members) && survey.members.length > 0) {
       // Require authentication for member-restricted surveys
-      if (!request?.user?.id) {
+      if (!user) {
         return {
           status: 401,
           body: { error: 'Authentication required to access this survey' },
         };
       }
 
-      const memberId = request.user.id;
-      const memberIds = survey.members.map((m) => (typeof m === 'object' ? m.id : m));
+      const memberId = typeof user === 'object' && user !== null ? Number(user.id) : Number(user);
+      const memberIds = survey.members.map((m) => (typeof m === 'object' ? Number(m.id) : Number(m)));
 
       if (!memberIds.includes(memberId)) {
         return {
@@ -218,14 +228,16 @@ export async function getSurvey(payload: Payload, surveyId: string, request?: Pa
 export async function completeSurvey(payload: Payload, surveyId: string, request: PayloadRequest) {
   try {
     // Check if user is authenticated as a member
-    if (!request.user || !request.user.id) {
+    const user = request.user;
+
+    if (!user) {
       return {
         status: 401,
         body: { error: 'Authentication required. Please log in to complete surveys.' },
       };
     }
 
-    const memberId = request.user.id;
+    const memberId = typeof user === 'object' && user !== null ? Number(user.id) : Number(user);
 
     // Get the survey with questions and member associations
     const survey = await payload.findByID({
@@ -250,7 +262,7 @@ export async function completeSurvey(payload: Payload, surveyId: string, request
 
     // Check if member is authorized to complete this survey (if members are specified)
     if (survey.members && Array.isArray(survey.members) && survey.members.length > 0) {
-      const memberIds = survey.members.map((m) => (typeof m === 'object' ? m.id : m));
+      const memberIds = survey.members.map((m) => (typeof m === 'object' ? Number(m.id) : Number(m)));
       if (!memberIds.includes(memberId)) {
         return {
           status: 403,
@@ -312,7 +324,10 @@ export async function completeSurvey(payload: Payload, surveyId: string, request
     }
 
     // Get member email for denormalization
-    const memberEmail = typeof request.user.email === 'string' ? request.user.email : String(memberId);
+    const memberEmail =
+      typeof user === 'object' && user !== null && 'email' in user && typeof user.email === 'string'
+        ? user.email
+        : String(memberId);
 
     // Create survey response
     const surveyResponse = await payload.create({
@@ -328,7 +343,9 @@ export async function completeSurvey(payload: Payload, surveyId: string, request
 
     // Create individual response items for each answer
     const responseItemPromises = questions.map(async (question) => {
-      const value = responses[question.name];
+      if (!question.slug) return null;
+
+      const value = responses[question.slug];
 
       // Skip if no value provided and not required
       if (value === undefined || value === null || value === '') {
@@ -339,7 +356,7 @@ export async function completeSurvey(payload: Payload, surveyId: string, request
       const itemData: {
         surveyResponse: number;
         question: number;
-        questionName: string;
+        questionSlug: string;
         questionType:
           | 'text'
           | 'textarea'
@@ -355,7 +372,7 @@ export async function completeSurvey(payload: Payload, surveyId: string, request
       } = {
         surveyResponse: surveyResponse.id as number,
         question: question.id as number,
-        questionName: question.name,
+        questionSlug: question.slug as string,
         questionType: question.type as
           | 'text'
           | 'textarea'

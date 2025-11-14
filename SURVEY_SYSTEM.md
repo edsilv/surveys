@@ -51,7 +51,7 @@ Track completed survey submissions:
 - **member**: Reference to the member who completed it (required)
 - **completed**: Whether the survey was completed
 - **completedAt**: Timestamp of completion
-- **submittedBy**: Denormalized email of the member (for quick reference)
+- **submittedBy**: Email of the member (for quick reference)
 
 ### Response Items
 
@@ -59,8 +59,8 @@ Individual answers for each question (enables efficient querying):
 
 - **surveyResponse**: Reference to the parent survey response
 - **question**: Reference to the question
-- **questionName**: Denormalized question name (indexed for fast queries)
-- **questionType**: Denormalized question type (indexed)
+- **questionName**: Question name (indexed for fast queries)
+- **questionType**: Question type (indexed)
 - **textValue**: For text, textarea, and multiple_choice responses (indexed)
 - **numberValue**: For rating responses (indexed)
 - **booleanValue**: For yes_no responses (indexed)

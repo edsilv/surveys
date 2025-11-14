@@ -221,6 +221,9 @@ export interface Member {
  */
 export interface Question {
   id: number;
+  title: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
   type:
     | 'text'
     | 'textarea'
@@ -229,11 +232,6 @@ export interface Question {
     | 'multiple_select_with_other'
     | 'rating'
     | 'yes_no';
-  label: string;
-  /**
-   * Unique identifier for this question (used in responses)
-   */
-  name: string;
   options?:
     | {
         value: string;
@@ -256,9 +254,9 @@ export interface Question {
    */
   condition?: {
     /**
-     * Name of the question this depends on
+     * Slug of the question this depends on
      */
-    name?: string | null;
+    slug?: string | null;
     /**
      * Value that triggers this question to display
      */
@@ -282,13 +280,11 @@ export interface Question {
 export interface Survey {
   id: number;
   title: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
   description?: string | null;
   questions: {
     question: number | Question;
-    /**
-     * Order in which the question appears in the survey
-     */
-    order: number;
     id?: string | null;
   }[];
   /**
@@ -316,7 +312,7 @@ export interface SurveyResponse {
   completed?: boolean | null;
   completedAt?: string | null;
   /**
-   * Email or identifier of the person who submitted the survey (denormalized from member)
+   * Email or identifier of the person who submitted the survey
    */
   submittedBy?: string | null;
   updatedAt: string;
@@ -330,13 +326,7 @@ export interface ResponseItem {
   id: number;
   surveyResponse: number | SurveyResponse;
   question: number | Question;
-  /**
-   * Denormalized question name for easier querying
-   */
-  questionName: string;
-  /**
-   * Denormalized question type for easier querying
-   */
+  questionSlug: string;
   questionType:
     | 'text'
     | 'textarea'
@@ -528,9 +518,10 @@ export interface MembersSelect<T extends boolean = true> {
  * via the `definition` "questions_select".
  */
 export interface QuestionsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  slugLock?: T;
   type?: T;
-  label?: T;
-  name?: T;
   options?:
     | T
     | {
@@ -550,7 +541,7 @@ export interface QuestionsSelect<T extends boolean = true> {
   condition?:
     | T
     | {
-        name?: T;
+        slug?: T;
         value?: T;
       };
   updatedAt?: T;
@@ -562,12 +553,13 @@ export interface QuestionsSelect<T extends boolean = true> {
  */
 export interface SurveysSelect<T extends boolean = true> {
   title?: T;
+  slug?: T;
+  slugLock?: T;
   description?: T;
   questions?:
     | T
     | {
         question?: T;
-        order?: T;
         id?: T;
       };
   members?: T;
@@ -595,7 +587,7 @@ export interface SurveyResponsesSelect<T extends boolean = true> {
 export interface ResponseItemsSelect<T extends boolean = true> {
   surveyResponse?: T;
   question?: T;
-  questionName?: T;
+  questionSlug?: T;
   questionType?: T;
   textValue?: T;
   numberValue?: T;
