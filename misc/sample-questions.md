@@ -75,3 +75,21 @@ Are you eligible to work in the UK?
 ## Type
 
 Yes/No
+
+## Title
+
+Why are you not eligible to work in the UK?
+
+## Type
+
+Multiple Select with Other
+
+## Options
+
+- Immigration status
+- Visa work restrictions
+- No sponsorship in place
+- Right to work documents missing or expired
+- Overstaying or breaching visa conditions
+- Age restrictions
+- Sanctions or legal issues

@@ -110,17 +110,19 @@ export const Questions: CollectionConfig = {
       },
       fields: [
         {
-          name: 'slug',
-          type: 'text',
+          name: 'question',
+          type: 'relationship',
+          relationTo: 'questions',
           admin: {
-            description: 'Slug of the question this depends on',
+            description: 'The question this depends on',
           },
         },
         {
           name: 'value',
-          type: 'json',
+          type: 'text',
           admin: {
-            description: 'Value that triggers this question to display',
+            description:
+              'Value that triggers this question to display. For yes/no questions use "true" or "false", for others use the exact option text or number.',
           },
         },
       ],

@@ -49,6 +49,31 @@ export default function SurveyForm({ surveyId }: SurveyFormProps) {
     const question = typeof questionData.question === 'object' ? questionData.question : null;
     if (!question || !question.slug) return null;
 
+    // Check if question should be displayed based on conditions
+    if (question.condition?.question && question.condition?.value) {
+      const conditionQuestion = typeof question.condition.question === 'object' ? question.condition.question : null;
+
+      if (conditionQuestion?.slug) {
+        const actualValue = responses[conditionQuestion.slug];
+        const expectedValue = question.condition.value;
+
+        // Convert the expected value based on the condition question type
+        let convertedExpectedValue: unknown = expectedValue;
+        if (conditionQuestion.type === 'yes_no') {
+          // Convert "true"/"false" strings to booleans
+          convertedExpectedValue = expectedValue === 'true';
+        } else if (conditionQuestion.type === 'rating') {
+          // Convert to number
+          convertedExpectedValue = Number(expectedValue);
+        }
+
+        // Only show this question if the condition is met
+        if (actualValue !== convertedExpectedValue) {
+          return null;
+        }
+      }
+    }
+
     const value = responses[question.slug];
 
     switch (question.type) {

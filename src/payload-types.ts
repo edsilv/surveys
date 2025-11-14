@@ -254,21 +254,13 @@ export interface Question {
    */
   condition?: {
     /**
-     * Slug of the question this depends on
+     * The question this depends on
      */
-    slug?: string | null;
+    question?: (number | null) | Question;
     /**
-     * Value that triggers this question to display
+     * Value that triggers this question to display. For yes/no questions use "true" or "false", for others use the exact option text or number.
      */
-    value?:
-      | {
-          [k: string]: unknown;
-        }
-      | unknown[]
-      | string
-      | number
-      | boolean
-      | null;
+    value?: string | null;
   };
   updatedAt: string;
   createdAt: string;
@@ -311,10 +303,6 @@ export interface SurveyResponse {
   member: number | Member;
   completed?: boolean | null;
   completedAt?: string | null;
-  /**
-   * Email or identifier of the person who submitted the survey
-   */
-  submittedBy?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -541,7 +529,7 @@ export interface QuestionsSelect<T extends boolean = true> {
   condition?:
     | T
     | {
-        slug?: T;
+        question?: T;
         value?: T;
       };
   updatedAt?: T;
@@ -576,7 +564,6 @@ export interface SurveyResponsesSelect<T extends boolean = true> {
   member?: T;
   completed?: T;
   completedAt?: T;
-  submittedBy?: T;
   updatedAt?: T;
   createdAt?: T;
 }

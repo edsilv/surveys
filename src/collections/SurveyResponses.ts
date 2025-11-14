@@ -13,6 +13,9 @@ export const SurveyResponses: CollectionConfig = {
       relationTo: 'surveys',
       required: true,
       index: true,
+      admin: {
+        readOnly: true,
+      },
     },
     {
       name: 'member',
@@ -22,6 +25,7 @@ export const SurveyResponses: CollectionConfig = {
       index: true,
       admin: {
         description: 'The member who completed this survey',
+        readOnly: true,
       },
     },
     {
@@ -29,18 +33,16 @@ export const SurveyResponses: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       index: true,
+      admin: {
+        readOnly: true,
+      },
     },
     {
       name: 'completedAt',
       type: 'date',
       index: true,
-    },
-    {
-      name: 'submittedBy',
-      type: 'text',
-      index: true,
       admin: {
-        description: 'Email or identifier of the person who submitted the survey',
+        readOnly: true,
       },
     },
   ],

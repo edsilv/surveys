@@ -21,11 +21,27 @@ function validateResponse(
   const displayName = title || slug;
 
   // Check if question should be displayed based on conditions
-  if (question.condition?.slug) {
-    const conditionValue = allResponses[question.condition.slug];
-    if (conditionValue !== question.condition.value) {
-      // Question is hidden, so it's optional
-      return null;
+  if (question.condition?.question && question.condition?.value) {
+    const conditionQuestion = typeof question.condition.question === 'object' ? question.condition.question : null;
+
+    if (conditionQuestion?.slug) {
+      const actualValue = allResponses[conditionQuestion.slug];
+      const expectedValue = question.condition.value;
+
+      // Convert the expected value based on the condition question type
+      let convertedExpectedValue: unknown = expectedValue;
+      if (conditionQuestion.type === 'yes_no') {
+        // Convert "true"/"false" strings to booleans
+        convertedExpectedValue = expectedValue === 'true';
+      } else if (conditionQuestion.type === 'rating') {
+        // Convert to number
+        convertedExpectedValue = Number(expectedValue);
+      }
+
+      if (actualValue !== convertedExpectedValue) {
+        // Question is hidden, so it's optional
+        return null;
+      }
     }
   }
 
@@ -323,12 +339,6 @@ export async function completeSurvey(payload: Payload, surveyId: string, request
       };
     }
 
-    // Get member email for denormalization
-    const memberEmail =
-      typeof user === 'object' && user !== null && 'email' in user && typeof user.email === 'string'
-        ? user.email
-        : String(memberId);
-
     // Create survey response
     const surveyResponse = await payload.create({
       collection: 'survey-responses',
@@ -337,7 +347,6 @@ export async function completeSurvey(payload: Payload, surveyId: string, request
         member: memberId,
         completed: true,
         completedAt: new Date().toISOString(),
-        submittedBy: memberEmail,
       },
     });
 
