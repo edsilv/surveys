@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { GeistMono } from 'geist/font/mono';
 import { GeistSans } from 'geist/font/sans';
 import React from 'react';
-import './globals.css';
+import '../globals.css';
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (

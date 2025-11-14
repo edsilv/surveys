@@ -64,7 +64,7 @@
     }
   },
   "dashboard": {
-    "welcome": "Welcome",
+    "welcome": "Welcome to your dashboard",
     "loading": "Loading...",
     "untitled": "Untitled",
     "noDescription": "No description available",
