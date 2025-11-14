@@ -57,7 +57,7 @@ src/
 │   ├── (frontend)/              # Public-facing pages
 │   │   ├── (authenticated)/     # Protected member routes
 │   │   │   └── dashboard/       # Survey dashboard & completion
-│   │   └── (auth)/              # Login/signup pages
+│   │   └── (public)/            # Home page & login/signup
 │   └── (payload)/               # Payload CMS admin
 ├── collections/                 # Payload collections
 │   ├── Questions.ts             # Question definitions with validation
