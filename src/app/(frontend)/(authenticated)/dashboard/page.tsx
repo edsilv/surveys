@@ -61,29 +61,33 @@ const page = async () => {
       <div className="mt-8 w-full">
         <h2 className="mb-8 text-lg">{t('dashboard.surveys.invitedTo')}</h2>
         <Suspense fallback={<Spinner />}>
-          <div className="space-y-4">
-            {surveys.map((survey) => {
-              const isCompleted = completedSurveyIds.has(survey.id as number);
-              return (
-                <Link
-                  href={`/dashboard/survey/${survey.id}`}
-                  key={survey.id}
-                  className="relative flex cursor-pointer flex-col overflow-hidden bg-gray-100 transition duration-200 ease-in-out hover:bg-gray-200 hover:shadow-md"
-                >
-                  <div className="space-y-2 p-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="line-clamp-1 text-lg">{survey.title}</h3>
-                      {isCompleted && <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-green-600" />}
+          {surveys.length === 0 ? (
+            <p className="text-gray-500">{t('dashboard.surveys.noSurveys')}</p>
+          ) : (
+            <div className="space-y-4">
+              {surveys.map((survey) => {
+                const isCompleted = completedSurveyIds.has(survey.id as number);
+                return (
+                  <Link
+                    href={`/dashboard/survey/${survey.id}`}
+                    key={survey.id}
+                    className="relative flex cursor-pointer flex-col overflow-hidden bg-gray-100 transition duration-200 ease-in-out hover:bg-gray-200 hover:shadow-md"
+                  >
+                    <div className="space-y-2 p-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="line-clamp-1 text-lg">{survey.title}</h3>
+                        {isCompleted && <CheckCircle2 className="h-6 w-6 flex-shrink-0 text-green-600" />}
+                      </div>
+                      <p className="line-clamp-2 text-sm text-gray-500">{survey.description}</p>
+                      <p className="text-xs text-gray-500">
+                        {t('dashboard.surveys.created')} {new Date(survey.createdAt).toLocaleDateString()}
+                      </p>
                     </div>
-                    <p className="line-clamp-2 text-sm text-gray-500">{survey.description}</p>
-                    <p className="text-xs text-gray-500">
-                      {t('dashboard.surveys.created')} {new Date(survey.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
         </Suspense>
       </div>
     </Section>

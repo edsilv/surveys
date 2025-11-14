@@ -72,7 +72,8 @@
     "thumbnailAlt": "thumbnail",
     "surveys": {
       "created": "Created",
-      "invitedTo": "Surveys You're Invited To"
+      "invitedTo": "Surveys You're Invited To",
+      "noSurveys": "No surveys yet!"
     }
   },
   "common": {
