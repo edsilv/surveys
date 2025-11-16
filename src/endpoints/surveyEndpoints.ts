@@ -266,11 +266,11 @@ export async function analyzeSentiment(payload: Payload, request: PayloadRequest
         {
           role: 'system',
           content:
-            'You are a sentiment analysis assistant. Analyze the sentiment and respond with only one word: "Positive", "Negative", or "Neutral".',
+            'You are a sentiment analysis assistant. Analyse the sentiment and respond with only one word: "Positive", "Negative", or "Neutral".',
         },
         {
           role: 'user',
-          content: `Analyze the sentiment of the following text: "${text}"`,
+          content: `Analyse the sentiment of the following text: "${text}"`,
         },
       ],
       max_tokens: 10,
