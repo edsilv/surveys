@@ -239,58 +239,6 @@ export async function getSurvey(payload: Payload, surveyId: string, request?: Pa
 }
 
 /**
- * POST /api/sentiment-analysis - Analyse sentiment of text responses
- */
-export async function analyseSentiment(payload: Payload, request: PayloadRequest) {
-  try {
-    const body = request.json ? await request.json() : {};
-    const { text } = body;
-
-    if (!text || typeof text !== 'string') {
-      return {
-        status: 400,
-        body: { error: 'Invalid request: text must be a string' },
-      };
-    }
-
-    // Import OpenAI dynamically
-    const { default: OpenAI } = await import('openai');
-
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are a sentiment analysis assistant. Analyse the sentiment and respond with only one word: "Positive", "Negative", or "Neutral".',
-        },
-        {
-          role: 'user',
-          content: `Analyse the sentiment of the following text: "${text}"`,
-        },
-      ],
-      max_tokens: 10,
-    });
-
-    const sentiment = response.choices[0]?.message?.content?.trim() || 'Neutral';
-
-    return {
-      status: 200,
-      body: { sentiment },
-    };
-  } catch (error) {
-    return {
-      status: 500,
-      body: { error: 'Failed to analyse sentiment', details: String(error) },
-    };
-  }
-}
-
-/**
  * POST /api/surveys/:id/complete - Submit and mark a survey as complete
  */
 export async function completeSurvey(payload: Payload, surveyId: string, request: PayloadRequest) {

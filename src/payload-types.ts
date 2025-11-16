@@ -332,6 +332,10 @@ export interface ResponseItem {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Sentiment score: 0 = negative, 0.5 = neutral, 1 = positive
+   */
+  sentiment?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -585,6 +589,7 @@ export interface ResponseItemsSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  sentiment?: T;
   updatedAt?: T;
   createdAt?: T;
 }

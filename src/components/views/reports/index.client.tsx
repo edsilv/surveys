@@ -35,39 +35,15 @@ interface ResponseItem {
   numberValue?: number;
   booleanValue?: boolean;
   arrayValue?: Array<{ value: string }>;
+  sentiment?: number;
   createdAt: string;
   updatedAt: string;
-}
-
-async function analyseSentiment(text: string): Promise<string> {
-  try {
-    const response = await fetch('/api/sentiment-analysis', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body: JSON.stringify({ text }),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to analyse sentiment');
-    }
-
-    const data = await response.json();
-    return data.sentiment || 'Neutral';
-  } catch (error) {
-    console.error('Sentiment analysis error:', error);
-    return 'Error';
-  }
 }
 
 export const ReportsClient: React.FC = () => {
   const [responseItems, setResponseItems] = useState<ResponseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sentiments, setSentiments] = useState<Record<string, string>>({});
-  const [analyzingCount, setAnalyzingCount] = useState(0);
 
   useEffect(() => {
     const fetchResponseItems = async () => {
@@ -84,23 +60,6 @@ export const ReportsClient: React.FC = () => {
         const data = await response.json();
         const items = data.docs || [];
         setResponseItems(items);
-
-        // Analyse sentiment for text and textarea responses only
-        const textItems = items.filter(
-          (item: ResponseItem) => item.textValue && ['text', 'textarea'].includes(item.questionType),
-        );
-        setAnalyzingCount(textItems.length);
-
-        const sentimentResults: Record<string, string> = {};
-
-        for (const item of textItems) {
-          if (item.textValue) {
-            const sentiment = await analyseSentiment(item.textValue);
-            sentimentResults[item.id] = sentiment;
-            setSentiments({ ...sentimentResults });
-            setAnalyzingCount((prev) => prev - 1);
-          }
-        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
       } finally {
@@ -120,23 +79,21 @@ export const ReportsClient: React.FC = () => {
   }
 
   const textResponses = responseItems.filter(
-    (item) => item.textValue && ['text', 'textarea'].includes(item.questionType),
+    (item) => item.textValue && ['text', 'textarea'].includes(item.questionType) && item.sentiment !== undefined,
   );
-  const positiveSentiments = Object.values(sentiments).filter((s) => s === 'Positive').length;
-  const negativeSentiments = Object.values(sentiments).filter((s) => s === 'Negative').length;
-  const neutralSentiments = Object.values(sentiments).filter((s) => s === 'Neutral').length;
+  const positiveSentiments = textResponses.filter((item) => item.sentiment && item.sentiment >= 0.6).length;
+  const negativeSentiments = textResponses.filter(
+    (item) => item.sentiment !== undefined && item.sentiment < 0.4,
+  ).length;
+  const neutralSentiments = textResponses.filter(
+    (item) => item.sentiment !== undefined && item.sentiment >= 0.4 && item.sentiment < 0.6,
+  ).length;
 
   return (
     <div>
       {/* <h2>Sentiment Analysis Report</h2> */}
 
-      {analyzingCount > 0 && (
-        <div style={{ marginTop: '1rem', padding: '1rem', background: '#e3f2fd', borderRadius: '4px' }}>
-          <p>Analyzing sentiment... {analyzingCount} remaining</p>
-        </div>
-      )}
-
-      {Object.keys(sentiments).length > 0 && (
+      {textResponses.length > 0 && (
         <div style={{ marginTop: '2rem' }}>
           <h3>Sentiment Summary</h3>
           <div style={{ display: 'flex', gap: '2rem', marginTop: '1rem' }}>
@@ -197,9 +154,9 @@ export const ReportsClient: React.FC = () => {
           </thead>
           <tbody>
             {textResponses.map((item) => {
-              const sentiment = sentiments[item.id];
-              const sentimentColor =
-                sentiment === 'Positive' ? '#66ff66' : sentiment === 'Negative' ? '#ff6666' : '#ffff66';
+              const sentimentScore = item.sentiment ?? 0.5;
+              const sentimentLabel = sentimentScore >= 0.6 ? 'Positive' : sentimentScore < 0.4 ? 'Negative' : 'Neutral';
+              const sentimentColor = sentimentScore >= 0.6 ? '#66ff66' : sentimentScore < 0.4 ? '#ff6666' : '#ffff66';
 
               const member =
                 typeof item.surveyResponse === 'object' && typeof item.surveyResponse.member === 'object'
@@ -274,7 +231,7 @@ export const ReportsClient: React.FC = () => {
                       color: '#000',
                     }}
                   >
-                    {sentiment || 'Analyzing...'}
+                    {sentimentLabel} ({sentimentScore.toFixed(2)})
                   </td>
                 </tr>
               );

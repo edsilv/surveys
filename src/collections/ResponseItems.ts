@@ -1,10 +1,30 @@
 import type { CollectionConfig } from 'payload';
+import { analyseSentiment } from '../lib/ai';
 
 export const ResponseItems: CollectionConfig = {
   slug: 'response-items',
   admin: {
     useAsTitle: 'id',
     defaultColumns: ['surveyResponse', 'question', 'value'],
+  },
+  hooks: {
+    beforeChange: [
+      async ({ data, operation }) => {
+        // Only analyse sentiment for new text/textarea responses
+        if (operation === 'create' && data.textValue && ['text', 'textarea'].includes(data.questionType)) {
+          try {
+            const sentiment = await analyseSentiment(data.textValue);
+            // Add sentiment to the data being created
+            data.sentiment = sentiment;
+          } catch (error) {
+            console.error('Failed to analyse sentiment for response item:', error);
+            // Set neutral sentiment on error
+            data.sentiment = 0.5;
+          }
+        }
+        return data;
+      },
+    ],
   },
   fields: [
     {
@@ -99,6 +119,20 @@ export const ResponseItems: CollectionConfig = {
           required: true,
         },
       ],
+    },
+    {
+      name: 'sentiment',
+      type: 'number',
+      min: 0,
+      max: 1,
+      admin: {
+        description: 'Sentiment score: 0 = negative, 0.5 = neutral, 1 = positive',
+        condition: (data) => {
+          return ['text', 'textarea'].includes(data.questionType);
+        },
+        readOnly: true,
+      },
+      index: true,
     },
   ],
   timestamps: true,
