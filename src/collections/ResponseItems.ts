@@ -10,8 +10,8 @@ export const ResponseItems: CollectionConfig = {
   hooks: {
     beforeChange: [
       async ({ data, operation }) => {
-        // Only analyse sentiment for new text/textarea responses
-        if (operation === 'create' && data.textValue && ['text', 'textarea'].includes(data.questionType)) {
+        // Only analyse sentiment for new textarea responses
+        if (operation === 'create' && data.textValue && data.questionType === 'textarea') {
           try {
             const sentiment = await analyseSentiment(data.textValue);
             // Add sentiment to the data being created
@@ -128,7 +128,7 @@ export const ResponseItems: CollectionConfig = {
       admin: {
         description: 'Sentiment score: 0 = negative, 0.5 = neutral, 1 = positive',
         condition: (data) => {
-          return ['text', 'textarea'].includes(data.questionType);
+          return data.questionType === 'textarea';
         },
         readOnly: true,
       },

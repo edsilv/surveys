@@ -79,7 +79,7 @@ export const ReportsClient: React.FC = () => {
   }
 
   const textResponses = responseItems.filter(
-    (item) => item.textValue && ['text', 'textarea'].includes(item.questionType) && item.sentiment !== undefined,
+    (item) => item.textValue && item.questionType === 'textarea' && item.sentiment !== undefined,
   );
   const positiveSentiments = textResponses.filter((item) => item.sentiment && item.sentiment >= 0.6).length;
   const negativeSentiments = textResponses.filter(
