@@ -162,9 +162,45 @@ export const ReportsClient: React.FC = () => {
     (item) => item.sentiment !== undefined && item.sentiment >= 0.4 && item.sentiment < 0.6,
   ).length;
 
+  // Calculate pie chart segments
+  const total = positiveSentiments + neutralSentiments + negativeSentiments;
+  const positivePercent = total > 0 ? (positiveSentiments / total) * 100 : 0;
+  const neutralPercent = total > 0 ? (neutralSentiments / total) * 100 : 0;
+  const negativePercent = total > 0 ? (negativeSentiments / total) * 100 : 0;
+
+  // Create pie chart paths
+  const createPieSlice = (startPercent: number, endPercent: number, color: string) => {
+    if (endPercent - startPercent === 0) return null;
+
+    const startAngle = (startPercent / 100) * 2 * Math.PI - Math.PI / 2;
+    const endAngle = (endPercent / 100) * 2 * Math.PI - Math.PI / 2;
+    const radius = 80;
+    const centerX = 100;
+    const centerY = 100;
+
+    const x1 = centerX + radius * Math.cos(startAngle);
+    const y1 = centerY + radius * Math.sin(startAngle);
+    const x2 = centerX + radius * Math.cos(endAngle);
+    const y2 = centerY + radius * Math.sin(endAngle);
+
+    const largeArcFlag = endPercent - startPercent > 50 ? 1 : 0;
+
+    if (endPercent - startPercent === 100) {
+      // Full circle
+      return <circle cx={centerX} cy={centerY} r={radius} fill={color} />;
+    }
+
+    return (
+      <path
+        d={`M ${centerX} ${centerY} L ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2} Z`}
+        fill={color}
+      />
+    );
+  };
+
   return (
     <div>
-      {/* <h2>Sentiment Analysis Report</h2> */}
+      <h2>Sentiment Analysis Report</h2>
 
       {textResponses.length === 0 ? (
         <div style={{ marginTop: '2rem', padding: '2rem', color: '#ffffffff' }}>
@@ -199,46 +235,36 @@ export const ReportsClient: React.FC = () => {
           </div>
 
           <div style={{ marginTop: '2rem' }}>
-            <h3>Sentiment Summary</h3>
-            <div style={{ display: 'flex', gap: '2rem', marginTop: '1rem' }}>
-              <div
-                style={{
-                  display: 'inline-block',
-                  padding: '1rem',
-                  background: '#66ff66',
-                  borderRadius: '4px',
-                  color: '#000',
-                }}
-              >
-                <strong>Positive:</strong> {positiveSentiments}
-              </div>
-              <div
-                style={{
-                  display: 'inline-block',
-                  padding: '1rem',
-                  background: '#ffff66',
-                  borderRadius: '4px',
-                  color: '#000',
-                }}
-              >
-                <strong>Neutral:</strong> {neutralSentiments}
-              </div>
-              <div
-                style={{
-                  display: 'inline-block',
-                  padding: '1rem',
-                  background: '#ff6666',
-                  borderRadius: '4px',
-                  color: '#000',
-                }}
-              >
-                <strong>Negative:</strong> {negativeSentiments}
+            <div style={{ display: 'flex', gap: '3rem', alignItems: 'center', marginTop: '1rem' }}>
+              <svg width="200" height="200" viewBox="0 0 200 200">
+                {createPieSlice(0, positivePercent, '#66ff66')}
+                {createPieSlice(positivePercent, positivePercent + neutralPercent, '#ffff66')}
+                {createPieSlice(positivePercent + neutralPercent, 100, '#ff6666')}
+              </svg>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ width: '20px', height: '20px', background: '#66ff66', borderRadius: '2px' }}></div>
+                  <span style={{ color: '#fff' }}>
+                    <strong>Positive:</strong> {positiveSentiments} ({positivePercent.toFixed(1)}%)
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ width: '20px', height: '20px', background: '#ffff66', borderRadius: '2px' }}></div>
+                  <span style={{ color: '#fff' }}>
+                    <strong>Neutral:</strong> {neutralSentiments} ({neutralPercent.toFixed(1)}%)
+                  </span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div style={{ width: '20px', height: '20px', background: '#ff6666', borderRadius: '2px' }}></div>
+                  <span style={{ color: '#fff' }}>
+                    <strong>Negative:</strong> {negativeSentiments} ({negativePercent.toFixed(1)}%)
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
           <div style={{ marginTop: '2rem' }}>
-            <h3>Text Responses with Sentiment:</h3>
             <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem', background: '#fff' }}>
               <thead>
                 <tr style={{ background: '#000' }}>
