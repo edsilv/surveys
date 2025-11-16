@@ -106,9 +106,7 @@ export const ReportsClient: React.FC = () => {
 
   return (
     <div>
-      <h2>Sentiment Analysis Report</h2>
-      <p>Total response items: {responseItems.length}</p>
-      <p>Text responses: {textResponses.length}</p>
+      {/* <h2>Sentiment Analysis Report</h2> */}
 
       {analyzingCount > 0 && (
         <div style={{ marginTop: '1rem', padding: '1rem', background: '#e3f2fd', borderRadius: '4px' }}>
