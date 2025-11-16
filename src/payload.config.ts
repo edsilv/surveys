@@ -45,6 +45,22 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    autoLogin: isDevelopment()
+      ? {
+          email: 'e.silverton@gmail.com',
+          password: 'password',
+          prefillOnly: true,
+        }
+      : undefined,
+    components: {
+      Nav: '@/components/nav/index.tsx',
+      views: {
+        reports: {
+          Component: '@/components/views/reports/index.tsx',
+          path: '/reports',
+        },
+      },
+    },
   },
   collections: [Users, Media, Members, Questions, Surveys, SurveyResponses, ResponseItems],
   editor: lexicalEditor(),
