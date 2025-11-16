@@ -309,7 +309,7 @@ export const ReportsClient: React.FC = () => {
 
           <div style={{ marginTop: '2rem' }}>
             <div style={{ display: 'flex', gap: '3rem', alignItems: 'center', marginTop: '1rem' }}>
-              <svg width="200" height="200" viewBox="0 0 200 200">
+              <svg width="150" height="150" viewBox="0 0 200 200">
                 {createPieSlice(0, positivePercent, '#66ff66')}
                 {createPieSlice(positivePercent, positivePercent + neutralPercent, '#ffff66')}
                 {createPieSlice(positivePercent + neutralPercent, 100, '#ff6666')}
