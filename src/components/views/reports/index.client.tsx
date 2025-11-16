@@ -9,6 +9,12 @@ interface ResponseItem {
     | string
     | {
         id: string;
+        survey:
+          | string
+          | {
+              id: string | number;
+              title: string;
+            };
         member:
           | string
           | {
@@ -16,7 +22,13 @@ interface ResponseItem {
               email: string;
             };
       };
-  question: string;
+  question:
+    | string
+    | {
+        id: string | number;
+        title: string;
+        slug: string;
+      };
   questionSlug: string;
   questionType: string;
   textValue?: string;
@@ -128,13 +140,37 @@ export const ReportsClient: React.FC = () => {
         <div style={{ marginTop: '2rem' }}>
           <h3>Sentiment Summary</h3>
           <div style={{ display: 'flex', gap: '2rem', marginTop: '1rem' }}>
-            <div style={{ display: 'inline-block', padding: '1rem', background: '#66ff66', borderRadius: '4px', color: '#000' }}>
+            <div
+              style={{
+                display: 'inline-block',
+                padding: '1rem',
+                background: '#66ff66',
+                borderRadius: '4px',
+                color: '#000',
+              }}
+            >
               <strong>Positive:</strong> {positiveSentiments}
             </div>
-            <div style={{ display: 'inline-block', padding: '1rem', background: '#ffff66', borderRadius: '4px', color: '#000' }}>
+            <div
+              style={{
+                display: 'inline-block',
+                padding: '1rem',
+                background: '#ffff66',
+                borderRadius: '4px',
+                color: '#000',
+              }}
+            >
               <strong>Neutral:</strong> {neutralSentiments}
             </div>
-            <div style={{ display: 'inline-block', padding: '1rem', background: '#ff6666', borderRadius: '4px', color: '#000' }}>
+            <div
+              style={{
+                display: 'inline-block',
+                padding: '1rem',
+                background: '#ff6666',
+                borderRadius: '4px',
+                color: '#000',
+              }}
+            >
               <strong>Negative:</strong> {negativeSentiments}
             </div>
           </div>
@@ -146,12 +182,8 @@ export const ReportsClient: React.FC = () => {
         <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem', background: '#fff' }}>
           <thead>
             <tr style={{ background: '#000' }}>
-              <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>
-                Member
-              </th>
-              <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>
-                Survey Response
-              </th>
+              <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>Member</th>
+              <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>Survey</th>
               <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>
                 Question
               </th>
@@ -169,14 +201,19 @@ export const ReportsClient: React.FC = () => {
               const sentimentColor =
                 sentiment === 'Positive' ? '#66ff66' : sentiment === 'Negative' ? '#ff6666' : '#ffff66';
 
-              const surveyResponseId =
-                typeof item.surveyResponse === 'object' ? item.surveyResponse.id : item.surveyResponse;
               const member =
                 typeof item.surveyResponse === 'object' && typeof item.surveyResponse.member === 'object'
                   ? item.surveyResponse.member
                   : null;
               const memberEmail = member ? member.email : 'N/A';
               const memberId = member ? member.id : null;
+
+              const survey =
+                typeof item.surveyResponse === 'object' && typeof item.surveyResponse.survey === 'object'
+                  ? item.surveyResponse.survey
+                  : null;
+              const surveyTitle = survey ? survey.title : 'N/A';
+              const surveyId = survey ? survey.id : null;
 
               return (
                 <tr key={item.id} style={{ background: '#fff' }}>
@@ -193,17 +230,41 @@ export const ReportsClient: React.FC = () => {
                     )}
                   </td>
                   <td style={{ padding: '0.5rem', border: '1px solid #ddd', color: '#000' }}>
-                    <a
-                      href={`/admin/collections/survey-responses/${surveyResponseId}`}
-                      style={{ color: '#0066cc', textDecoration: 'underline' }}
-                    >
-                      {surveyResponseId}
-                    </a>
+                    {surveyId ? (
+                      <a
+                        href={`/admin/collections/surveys/${surveyId}`}
+                        style={{ color: '#0066cc', textDecoration: 'underline' }}
+                      >
+                        {surveyTitle}
+                      </a>
+                    ) : (
+                      surveyTitle
+                    )}
                   </td>
                   <td style={{ padding: '0.5rem', border: '1px solid #ddd', color: '#000' }}>
-                    <strong>{item.questionSlug}</strong>
+                    <strong>
+                      {typeof item.question === 'object' && item.question.title
+                        ? item.question.title
+                        : item.questionSlug}
+                    </strong>{' '}
+                    {typeof item.question === 'object' && item.question.id && (
+                      <a
+                        href={`/admin/collections/questions/${item.question.id}`}
+                        style={{ color: '#0066cc', textDecoration: 'underline', fontSize: '0.9em' }}
+                      >
+                        [{item.question.id}]
+                      </a>
+                    )}
                   </td>
-                  <td style={{ padding: '0.5rem', border: '1px solid #ddd', color: '#000' }}>{item.textValue}</td>
+                  <td style={{ padding: '0.5rem', border: '1px solid #ddd', color: '#000' }}>
+                    {item.textValue}{' '}
+                    <a
+                      href={`/admin/collections/response-items/${item.id}`}
+                      style={{ color: '#0066cc', textDecoration: 'underline', fontSize: '0.9em' }}
+                    >
+                      [{item.id}]
+                    </a>
+                  </td>
                   <td
                     style={{
                       padding: '0.5rem',
