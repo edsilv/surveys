@@ -98,3 +98,47 @@ Provide a chatbot interface allowing administrators to query survey data using n
 - "What were the most common complaints in the last employee survey?"
 - "Show me all responses from users who rated us below 3 stars"
 - "Summarise the feedback from the London office"
+
+## Potential Improvements
+
+### Email Invitations with Magic Links
+
+Add the ability to send invitation emails directly from Payload to all respondents assigned to a survey. Each email would contain a "magic link" that:
+
+- Bypasses the need for respondents to manually log in
+- Provides secure one-time or time-limited access to their assigned survey
+- Improves response rates by reducing friction in the survey completion process
+- Maintains security through token-based authentication
+
+Implementation would require:
+
+- Email service integration (resend.com)
+- Token generation and validation system
+- Custom Payload hooks to trigger emails when surveys are published
+- Email templates with personalised survey links
+- Token expiration and usage tracking
+
+### Survey Templates and Cloning
+
+Enable administrators to:
+
+- Create reusable survey templates for common use cases
+- Clone existing surveys with all questions and configurations
+- Build a template library for different survey types (employee feedback, customer satisfaction, event feedback)
+
+### Multi-language Support
+
+Add internationalisation capabilities:
+
+- Questions and answers in multiple languages
+- Language selection at survey start
+- Admin interface for managing translations
+- Automatic language detection based on respondent preferences
+
+### Response Rate Optimisation
+
+Implement features to improve survey completion:
+
+- Progress indicators showing completion percentage
+- Save and resume functionality for long surveys
+- Automated reminder emails for incomplete surveys
