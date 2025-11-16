@@ -16,7 +16,7 @@ export async function login({ email, password }: LoginParams): Promise<LoginResp
 
   try {
     const result: Result = await payload.login({
-      collection: 'members',
+      collection: 'respondents',
       data: {
         email,
         password,

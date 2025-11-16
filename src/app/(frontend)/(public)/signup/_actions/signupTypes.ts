@@ -1,4 +1,4 @@
-import { Member } from '@/payload-types';
+import { Respondent } from '@/payload-types';
 
 // Error codes for signup failures
 export const SIGNUP_ERROR_CODES = {
@@ -19,5 +19,5 @@ export interface SignupResponse {
 export type Result = {
   exp?: number;
   token?: string;
-  user?: Member;
+  user?: Respondent;
 };

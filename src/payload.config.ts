@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 
 import { Users } from './collections/Users';
 import { Media } from './collections/Media';
-import { Members } from './collections/Members';
+import { Respondents } from './collections/Respondents';
 import { Questions } from './collections/Questions';
 import { Surveys } from './collections/Surveys';
 import { SurveyResponses } from './collections/SurveyResponses';
@@ -62,7 +62,7 @@ export default buildConfig({
       },
     },
   },
-  collections: [Users, Media, Members, Questions, Surveys, SurveyResponses, ResponseItems],
+  collections: [Users, Media, Respondents, Questions, Surveys, SurveyResponses, ResponseItems],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

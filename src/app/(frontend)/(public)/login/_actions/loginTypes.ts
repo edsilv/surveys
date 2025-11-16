@@ -1,4 +1,4 @@
-import { Member } from '@/payload-types';
+import { Respondent } from '@/payload-types';
 
 // Error codes for login failures
 export const LOGIN_ERROR_CODES = {
@@ -19,5 +19,5 @@ export interface LoginResponse {
 export type Result = {
   exp?: number;
   token?: string;
-  user?: Member;
+  user?: Respondent;
 };

@@ -18,13 +18,13 @@ export const SurveyResponses: CollectionConfig = {
       },
     },
     {
-      name: 'member',
+      name: 'respondent',
       type: 'relationship',
-      relationTo: 'members',
+      relationTo: 'respondents',
       required: true,
       index: true,
       admin: {
-        description: 'The member who completed this survey',
+        description: 'The respondent who completed this survey',
         readOnly: true,
       },
     },

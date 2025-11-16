@@ -30,12 +30,12 @@ const page = async () => {
     });
     surveys = surveysRes.docs;
 
-    // Get completed survey responses for this member
+    // Get completed survey responses for this respondent
     if (user?.id) {
       const completedResponses = await payload.find({
         collection: 'survey-responses',
         where: {
-          and: [{ member: { equals: user.id } }, { completed: { equals: true } }],
+          and: [{ respondent: { equals: user.id } }, { completed: { equals: true } }],
         },
       });
 

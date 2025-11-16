@@ -64,13 +64,13 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
-    members: MemberAuthOperations;
+    respondents: RespondentAuthOperations;
   };
   blocks: {};
   collections: {
     users: User;
     media: Media;
-    members: Member;
+    respondents: Respondent;
     questions: Question;
     surveys: Survey;
     'survey-responses': SurveyResponse;
@@ -84,7 +84,7 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
-    members: MembersSelect<false> | MembersSelect<true>;
+    respondents: RespondentsSelect<false> | RespondentsSelect<true>;
     questions: QuestionsSelect<false> | QuestionsSelect<true>;
     surveys: SurveysSelect<false> | SurveysSelect<true>;
     'survey-responses': SurveyResponsesSelect<false> | SurveyResponsesSelect<true>;
@@ -104,8 +104,8 @@ export interface Config {
     | (User & {
         collection: 'users';
       })
-    | (Member & {
-        collection: 'members';
+    | (Respondent & {
+        collection: 'respondents';
       });
   jobs: {
     tasks: unknown;
@@ -130,7 +130,7 @@ export interface UserAuthOperations {
     password: string;
   };
 }
-export interface MemberAuthOperations {
+export interface RespondentAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -193,9 +193,9 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "members".
+ * via the `definition` "respondents".
  */
-export interface Member {
+export interface Respondent {
   id: number;
   updatedAt: string;
   createdAt: string;
@@ -280,9 +280,9 @@ export interface Survey {
     id?: string | null;
   }[];
   /**
-   * Members who can access and complete this survey
+   * Respondents who can access and complete this survey
    */
-  members?: (number | Member)[] | null;
+  respondents?: (number | Respondent)[] | null;
   /**
    * Whether this survey is currently accepting responses
    */
@@ -298,9 +298,9 @@ export interface SurveyResponse {
   id: number;
   survey: number | Survey;
   /**
-   * The member who completed this survey
+   * The respondent who completed this survey
    */
-  member: number | Member;
+  respondent: number | Respondent;
   completed?: boolean | null;
   completedAt?: string | null;
   updatedAt: string;
@@ -372,8 +372,8 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
-        relationTo: 'members';
-        value: number | Member;
+        relationTo: 'respondents';
+        value: number | Respondent;
       } | null)
     | ({
         relationTo: 'questions';
@@ -398,8 +398,8 @@ export interface PayloadLockedDocument {
         value: number | User;
       }
     | {
-        relationTo: 'members';
-        value: number | Member;
+        relationTo: 'respondents';
+        value: number | Respondent;
       };
   updatedAt: string;
   createdAt: string;
@@ -416,8 +416,8 @@ export interface PayloadPreference {
         value: number | User;
       }
     | {
-        relationTo: 'members';
-        value: number | Member;
+        relationTo: 'respondents';
+        value: number | Respondent;
       };
   key?: string | null;
   value?:
@@ -485,9 +485,9 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "members_select".
+ * via the `definition` "respondents_select".
  */
-export interface MembersSelect<T extends boolean = true> {
+export interface RespondentsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -554,7 +554,7 @@ export interface SurveysSelect<T extends boolean = true> {
         question?: T;
         id?: T;
       };
-  members?: T;
+  respondents?: T;
   active?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -565,7 +565,7 @@ export interface SurveysSelect<T extends boolean = true> {
  */
 export interface SurveyResponsesSelect<T extends boolean = true> {
   survey?: T;
-  member?: T;
+  respondent?: T;
   completed?: T;
   completedAt?: T;
   updatedAt?: T;

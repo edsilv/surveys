@@ -205,9 +205,14 @@ export async function getSurvey(payload: Payload, surveyId: string, request?: Pa
       };
     }
 
-    // Check if survey is restricted to specific members
-    if (survey.members && Array.isArray(survey.members) && survey.members.length > 0) {
-      // Require authentication for member-restricted surveys
+    // Check if survey is restricted to specific respondents
+    const surveyWithRespondents = survey as typeof survey & { respondents?: Array<number | { id: number }> };
+    if (
+      surveyWithRespondents.respondents &&
+      Array.isArray(surveyWithRespondents.respondents) &&
+      surveyWithRespondents.respondents.length > 0
+    ) {
+      // Require authentication for respondent-restricted surveys
       if (!user) {
         return {
           status: 401,
@@ -215,10 +220,12 @@ export async function getSurvey(payload: Payload, surveyId: string, request?: Pa
         };
       }
 
-      const memberId = typeof user === 'object' && user !== null ? Number(user.id) : Number(user);
-      const memberIds = survey.members.map((m) => (typeof m === 'object' ? Number(m.id) : Number(m)));
+      const respondentId = typeof user === 'object' && user !== null ? Number(user.id) : Number(user);
+      const respondentIds = surveyWithRespondents.respondents.map((m) =>
+        typeof m === 'object' ? Number(m.id) : Number(m),
+      );
 
-      if (!memberIds.includes(memberId)) {
+      if (!respondentIds.includes(respondentId)) {
         return {
           status: 403,
           body: { error: 'You are not authorized to access this survey' },
@@ -243,7 +250,7 @@ export async function getSurvey(payload: Payload, surveyId: string, request?: Pa
  */
 export async function completeSurvey(payload: Payload, surveyId: string, request: PayloadRequest) {
   try {
-    // Check if user is authenticated as a member
+    // Check if user is authenticated as a respondent
     const user = request.user;
 
     if (!user) {
@@ -253,9 +260,9 @@ export async function completeSurvey(payload: Payload, surveyId: string, request
       };
     }
 
-    const memberId = typeof user === 'object' && user !== null ? Number(user.id) : Number(user);
+    const respondentId = typeof user === 'object' && user !== null ? Number(user.id) : Number(user);
 
-    // Get the survey with questions and member associations
+    // Get the survey with questions and respondent associations
     const survey = await payload.findByID({
       collection: 'surveys',
       id: surveyId,
@@ -276,10 +283,17 @@ export async function completeSurvey(payload: Payload, surveyId: string, request
       };
     }
 
-    // Check if member is authorized to complete this survey (if members are specified)
-    if (survey.members && Array.isArray(survey.members) && survey.members.length > 0) {
-      const memberIds = survey.members.map((m) => (typeof m === 'object' ? Number(m.id) : Number(m)));
-      if (!memberIds.includes(memberId)) {
+    // Check if respondent is authorized to complete this survey (if respondents are specified)
+    const surveyWithRespondents = survey as typeof survey & { respondents?: Array<number | { id: number }> };
+    if (
+      surveyWithRespondents.respondents &&
+      Array.isArray(surveyWithRespondents.respondents) &&
+      surveyWithRespondents.respondents.length > 0
+    ) {
+      const respondentIds = surveyWithRespondents.respondents.map((m) =>
+        typeof m === 'object' ? Number(m.id) : Number(m),
+      );
+      if (!respondentIds.includes(respondentId)) {
         return {
           status: 403,
           body: { error: 'You are not authorized to complete this survey' },
@@ -287,13 +301,13 @@ export async function completeSurvey(payload: Payload, surveyId: string, request
       }
     }
 
-    // Check if member has already completed this survey
+    // Check if respondent has already completed this survey
     const existingResponse = await payload.find({
       collection: 'survey-responses',
       where: {
         and: [
           { survey: { equals: parseInt(surveyId, 10) } },
-          { member: { equals: memberId } },
+          { respondent: { equals: respondentId } },
           { completed: { equals: true } },
         ],
       },
@@ -344,7 +358,7 @@ export async function completeSurvey(payload: Payload, surveyId: string, request
       collection: 'survey-responses',
       data: {
         survey: parseInt(surveyId, 10),
-        member: memberId,
+        respondent: respondentId,
         completed: true,
         completedAt: new Date().toISOString(),
       },

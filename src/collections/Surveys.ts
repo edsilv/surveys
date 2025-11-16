@@ -36,12 +36,12 @@ export const Surveys: CollectionConfig = {
       ],
     },
     {
-      name: 'members',
+      name: 'respondents',
       type: 'relationship',
-      relationTo: 'members',
+      relationTo: 'respondents',
       hasMany: true,
       admin: {
-        description: 'Members who can access and complete this survey',
+        description: 'Respondents who can access and complete this survey',
       },
     },
     {

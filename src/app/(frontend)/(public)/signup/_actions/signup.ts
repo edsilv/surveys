@@ -15,7 +15,7 @@ export async function signup({ email, password }: SignupParams): Promise<SignupR
 
   try {
     await payload.create({
-      collection: 'members',
+      collection: 'respondents',
       data: {
         email,
         password,
@@ -23,7 +23,7 @@ export async function signup({ email, password }: SignupParams): Promise<SignupR
     });
 
     const result: Result = await payload.login({
-      collection: 'members',
+      collection: 'respondents',
       data: {
         email,
         password,
