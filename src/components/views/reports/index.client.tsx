@@ -17,7 +17,7 @@ interface ResponseItem {
   updatedAt: string;
 }
 
-async function analyzeSentiment(text: string): Promise<string> {
+async function analyseSentiment(text: string): Promise<string> {
   try {
     const response = await fetch('/api/sentiment-analysis', {
       method: 'POST',
@@ -29,7 +29,7 @@ async function analyzeSentiment(text: string): Promise<string> {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to analyze sentiment');
+      throw new Error('Failed to analyse sentiment');
     }
 
     const data = await response.json();
@@ -63,7 +63,7 @@ export const ReportsClient: React.FC = () => {
         const items = data.docs || [];
         setResponseItems(items);
 
-        // Analyze sentiment for text responses
+        // Analyse sentiment for text responses
         const textItems = items.filter((item: ResponseItem) => item.textValue);
         setAnalyzingCount(textItems.length);
 
@@ -71,7 +71,7 @@ export const ReportsClient: React.FC = () => {
 
         for (const item of textItems) {
           if (item.textValue) {
-            const sentiment = await analyzeSentiment(item.textValue);
+            const sentiment = await analyseSentiment(item.textValue);
             sentimentResults[item.id] = sentiment;
             setSentiments({ ...sentimentResults });
             setAnalyzingCount((prev) => prev - 1);

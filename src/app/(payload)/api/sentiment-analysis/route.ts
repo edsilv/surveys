@@ -1,6 +1,6 @@
 import { getPayload } from 'payload';
 import configPromise from '@payload-config';
-import { analyzeSentiment } from '@/endpoints/surveyEndpoints';
+import { analyseSentiment } from '@/endpoints/surveyEndpoints';
 
 export async function POST(request: Request) {
   const payload = await getPayload({ config: configPromise });
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     json: async () => request.json(),
   } as any;
 
-  const result = await analyzeSentiment(payload, payloadRequest);
+  const result = await analyseSentiment(payload, payloadRequest);
 
   return Response.json(result.body, { status: result.status });
 }

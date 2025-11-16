@@ -239,9 +239,9 @@ export async function getSurvey(payload: Payload, surveyId: string, request?: Pa
 }
 
 /**
- * POST /api/sentiment-analysis - Analyze sentiment of text responses
+ * POST /api/sentiment-analysis - Analyse sentiment of text responses
  */
-export async function analyzeSentiment(payload: Payload, request: PayloadRequest) {
+export async function analyseSentiment(payload: Payload, request: PayloadRequest) {
   try {
     const body = request.json ? await request.json() : {};
     const { text } = body;
@@ -285,7 +285,7 @@ export async function analyzeSentiment(payload: Payload, request: PayloadRequest
   } catch (error) {
     return {
       status: 500,
-      body: { error: 'Failed to analyze sentiment', details: String(error) },
+      body: { error: 'Failed to analyse sentiment', details: String(error) },
     };
   }
 }
