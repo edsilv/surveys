@@ -315,22 +315,22 @@ export const ReportsClient: React.FC = () => {
                 {createPieSlice(positivePercent + neutralPercent, 100, '#ff6666')}
               </svg>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <div style={{ width: '20px', height: '20px', background: '#66ff66', borderRadius: '2px' }}></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{ width: '12px', height: '12px', background: '#66ff66', borderRadius: '50%' }}></div>
                   <span style={{ color: '#fff' }}>
-                    <strong>Positive:</strong> {positiveSentiments} ({positivePercent.toFixed(1)}%)
+                    Positive: {positiveSentiments} ({positivePercent.toFixed(1)}%)
                   </span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <div style={{ width: '20px', height: '20px', background: '#ffff66', borderRadius: '2px' }}></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{ width: '12px', height: '12px', background: '#ffff66', borderRadius: '50%' }}></div>
                   <span style={{ color: '#fff' }}>
-                    <strong>Neutral:</strong> {neutralSentiments} ({neutralPercent.toFixed(1)}%)
+                    Neutral: {neutralSentiments} ({neutralPercent.toFixed(1)}%)
                   </span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <div style={{ width: '20px', height: '20px', background: '#ff6666', borderRadius: '2px' }}></div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{ width: '12px', height: '12px', background: '#ff6666', borderRadius: '50%' }}></div>
                   <span style={{ color: '#fff' }}>
-                    <strong>Negative:</strong> {negativeSentiments} ({negativePercent.toFixed(1)}%)
+                    Negative: {negativeSentiments} ({negativePercent.toFixed(1)}%)
                   </span>
                 </div>
               </div>
