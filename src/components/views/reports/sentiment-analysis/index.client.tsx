@@ -3,6 +3,26 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 
+interface ChevronIconProps {
+  direction: 'up' | 'down';
+  color?: string;
+  size?: number;
+}
+
+const ChevronIcon: React.FC<ChevronIconProps> = ({ direction, color = '#fff', size = 16 }) => {
+  return (
+    <svg
+      height={size}
+      viewBox="0 0 20 20"
+      width={size}
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ transform: direction === 'up' ? 'rotate(180deg)' : 'none' }}
+    >
+      <path d="M14 8L10 12L6 8" strokeLinecap="square" stroke={color} fill="none" />
+    </svg>
+  );
+};
+
 interface SortChevronProps {
   field: 'respondent' | 'question' | 'sentiment';
   currentSortField: 'respondent' | 'question' | 'sentiment';
@@ -24,22 +44,10 @@ const SortChevron: React.FC<SortChevronProps> = ({ field, currentSortField, curr
           height: '16px',
         }}
       >
-        <svg
-          height="100%"
-          viewBox="0 0 20 20"
-          width="100%"
-          xmlns="http://www.w3.org/2000/svg"
-          style={{ transform: 'rotate(180deg)' }}
-        >
-          <path
-            d="M14 8L10 12L6 8"
-            strokeLinecap="square"
-            stroke={
-              currentSortField === field && currentSortDirection === 'asc' ? '#fff' : 'var(--theme-elevation-400)'
-            }
-            fill="none"
-          />
-        </svg>
+        <ChevronIcon
+          direction="up"
+          color={currentSortField === field && currentSortDirection === 'asc' ? '#fff' : 'var(--theme-elevation-400)'}
+        />
       </button>
       <button
         onClick={() => onSort(field, 'desc')}
@@ -52,16 +60,10 @@ const SortChevron: React.FC<SortChevronProps> = ({ field, currentSortField, curr
           height: '16px',
         }}
       >
-        <svg height="100%" viewBox="0 0 20 20" width="100%" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M14 8L10 12L6 8"
-            strokeLinecap="square"
-            stroke={
-              currentSortField === field && currentSortDirection === 'desc' ? '#fff' : 'var(--theme-elevation-400)'
-            }
-            fill="none"
-          />
-        </svg>
+        <ChevronIcon
+          direction="down"
+          color={currentSortField === field && currentSortDirection === 'desc' ? '#fff' : 'var(--theme-elevation-400)'}
+        />
       </button>
     </span>
   );
@@ -267,26 +269,42 @@ export const ReportsClient: React.FC = () => {
             <label htmlFor="survey-filter" style={{ marginRight: '0.5rem', fontWeight: 'bold' }}>
               Filter by Survey:
             </label>
-            <select
-              id="survey-filter"
-              value={selectedSurvey}
-              onChange={(e) => setSelectedSurvey(e.target.value)}
-              style={{
-                padding: '0.5rem',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                backgroundColor: '#fff',
-                color: '#000',
-                cursor: 'pointer',
-              }}
-            >
-              <option value="all">All Surveys</option>
-              {surveys.map((survey) => (
-                <option key={survey.id} value={survey.id.toString()}>
-                  {survey.title}
-                </option>
-              ))}
-            </select>
+            <div style={{ display: 'inline-block', position: 'relative' }}>
+              <select
+                id="survey-filter"
+                value={selectedSurvey}
+                onChange={(e) => setSelectedSurvey(e.target.value)}
+                style={{
+                  padding: '0.5rem 2.5rem 0.5rem 0.5rem',
+                  backgroundColor: 'rgb(60, 60, 60)',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  border: 'none',
+                  appearance: 'none',
+                  paddingRight: '2.5rem',
+                }}
+              >
+                <option value="all">All Surveys</option>
+                {surveys.map((survey) => (
+                  <option key={survey.id} value={survey.id.toString()}>
+                    {survey.title}
+                  </option>
+                ))}
+              </select>
+              <div
+                style={{
+                  position: 'absolute',
+                  right: '0.5rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  pointerEvents: 'none',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <ChevronIcon direction="down" color="#fff" size={16} />
+              </div>
+            </div>
           </div>
 
           <div style={{ marginTop: '2rem' }}>
