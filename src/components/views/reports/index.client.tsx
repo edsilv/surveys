@@ -5,7 +5,7 @@ import React from 'react';
 
 interface ResponseItem {
   id: string;
-  surveyResponse: string;
+  surveyResponse: string | { id: string };
   question: string;
   questionSlug: string;
   questionType: string;
@@ -63,8 +63,10 @@ export const ReportsClient: React.FC = () => {
         const items = data.docs || [];
         setResponseItems(items);
 
-        // Analyse sentiment for text responses
-        const textItems = items.filter((item: ResponseItem) => item.textValue);
+        // Analyse sentiment for text and textarea responses only
+        const textItems = items.filter(
+          (item: ResponseItem) => item.textValue && ['text', 'textarea'].includes(item.questionType),
+        );
         setAnalyzingCount(textItems.length);
 
         const sentimentResults: Record<string, string> = {};
@@ -95,7 +97,9 @@ export const ReportsClient: React.FC = () => {
     return <div>Error: {error}</div>;
   }
 
-  const textResponses = responseItems.filter((item) => item.textValue);
+  const textResponses = responseItems.filter(
+    (item) => item.textValue && ['text', 'textarea'].includes(item.questionType),
+  );
   const positiveSentiments = Object.values(sentiments).filter((s) => s === 'Positive').length;
   const negativeSentiments = Object.values(sentiments).filter((s) => s === 'Negative').length;
   const neutralSentiments = Object.values(sentiments).filter((s) => s === 'Neutral').length;
@@ -135,6 +139,9 @@ export const ReportsClient: React.FC = () => {
           <thead>
             <tr style={{ background: '#f5f5f5' }}>
               <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#000' }}>
+                Survey Response
+              </th>
+              <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#000' }}>
                 Question
               </th>
               <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#000' }}>
@@ -153,6 +160,14 @@ export const ReportsClient: React.FC = () => {
 
               return (
                 <tr key={item.id}>
+                  <td style={{ padding: '0.5rem', border: '1px solid #ddd' }}>
+                    <a
+                      href={`/admin/collections/survey-responses/${typeof item.surveyResponse === 'object' ? item.surveyResponse.id : item.surveyResponse}`}
+                      style={{ color: '#0066cc', textDecoration: 'underline' }}
+                    >
+                      {typeof item.surveyResponse === 'object' ? item.surveyResponse.id : item.surveyResponse}
+                    </a>
+                  </td>
                   <td style={{ padding: '0.5rem', border: '1px solid #ddd' }}>
                     <strong>{item.questionSlug}</strong>
                   </td>
