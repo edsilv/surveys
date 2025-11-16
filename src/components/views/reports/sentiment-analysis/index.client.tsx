@@ -3,6 +3,70 @@
 import { useEffect, useState } from 'react';
 import React from 'react';
 
+interface SortChevronProps {
+  field: 'respondent' | 'question' | 'sentiment';
+  currentSortField: 'respondent' | 'question' | 'sentiment';
+  currentSortDirection: 'asc' | 'desc';
+  onSort: (field: 'respondent' | 'question' | 'sentiment', direction: 'asc' | 'desc') => void;
+}
+
+const SortChevron: React.FC<SortChevronProps> = ({ field, currentSortField, currentSortDirection, onSort }) => {
+  return (
+    <span style={{ display: 'inline-flex', flexDirection: 'row', gap: '2px' }}>
+      <button
+        onClick={() => onSort(field, 'asc')}
+        style={{
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          cursor: 'pointer',
+          width: '16px',
+          height: '16px',
+        }}
+      >
+        <svg
+          height="100%"
+          viewBox="0 0 20 20"
+          width="100%"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ transform: 'rotate(180deg)' }}
+        >
+          <path
+            d="M14 8L10 12L6 8"
+            strokeLinecap="square"
+            stroke={
+              currentSortField === field && currentSortDirection === 'asc' ? '#fff' : 'var(--theme-elevation-400)'
+            }
+            fill="none"
+          />
+        </svg>
+      </button>
+      <button
+        onClick={() => onSort(field, 'desc')}
+        style={{
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          cursor: 'pointer',
+          width: '16px',
+          height: '16px',
+        }}
+      >
+        <svg height="100%" viewBox="0 0 20 20" width="100%" xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M14 8L10 12L6 8"
+            strokeLinecap="square"
+            stroke={
+              currentSortField === field && currentSortDirection === 'desc' ? '#fff' : 'var(--theme-elevation-400)'
+            }
+            fill="none"
+          />
+        </svg>
+      </button>
+    </span>
+  );
+};
+
 interface ResponseItem {
   id: string;
   surveyResponse:
@@ -50,15 +114,6 @@ export const ReportsClient: React.FC = () => {
   const [sortField, setSortField] = useState<SortField>('sentiment');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [selectedSurvey, setSelectedSurvey] = useState<string>('all');
-
-  const handleSort = (field: SortField) => {
-    if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
 
   useEffect(() => {
     const fetchResponseItems = async () => {
@@ -265,58 +320,90 @@ export const ReportsClient: React.FC = () => {
           </div>
 
           <div style={{ marginTop: '2rem' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem', background: '#fff' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
               <thead>
-                <tr style={{ background: '#000' }}>
+                <tr>
                   <th
                     style={{
-                      padding: '0.5rem',
+                      padding: '1rem',
                       textAlign: 'left',
-                      border: '1px solid #ddd',
-                      color: '#fff',
-                      cursor: 'pointer',
-                      userSelect: 'none',
+                      color: 'var(--theme-elevation-400)',
+                      fontWeight: 'normal',
                     }}
-                    onClick={() => handleSort('respondent')}
                   >
-                    Respondent {sortField === 'respondent' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    Respondent{' '}
+                    <SortChevron
+                      field="respondent"
+                      currentSortField={sortField}
+                      currentSortDirection={sortDirection}
+                      onSort={(field, direction) => {
+                        setSortField(field);
+                        setSortDirection(direction);
+                      }}
+                    />
                   </th>
-                  <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>
+                  <th
+                    style={{
+                      padding: '1rem',
+                      textAlign: 'left',
+                      color: 'var(--theme-elevation-400)',
+                      fontWeight: 'normal',
+                    }}
+                  >
                     Survey
                   </th>
                   <th
                     style={{
-                      padding: '0.5rem',
+                      padding: '1rem',
                       textAlign: 'left',
-                      border: '1px solid #ddd',
-                      color: '#fff',
-                      cursor: 'pointer',
-                      userSelect: 'none',
+                      color: 'var(--theme-elevation-400)',
+                      fontWeight: 'normal',
                     }}
-                    onClick={() => handleSort('question')}
                   >
-                    Question {sortField === 'question' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    Question{' '}
+                    <SortChevron
+                      field="question"
+                      currentSortField={sortField}
+                      currentSortDirection={sortDirection}
+                      onSort={(field, direction) => {
+                        setSortField(field);
+                        setSortDirection(direction);
+                      }}
+                    />
                   </th>
-                  <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>
+                  <th
+                    style={{
+                      padding: '1rem',
+                      textAlign: 'left',
+                      color: 'var(--theme-elevation-400)',
+                      fontWeight: 'normal',
+                    }}
+                  >
                     Response
                   </th>
                   <th
                     style={{
-                      padding: '0.5rem',
+                      padding: '1rem',
                       textAlign: 'left',
-                      border: '1px solid #ddd',
-                      color: '#fff',
-                      cursor: 'pointer',
-                      userSelect: 'none',
+                      color: 'var(--theme-elevation-400)',
+                      fontWeight: 'normal',
                     }}
-                    onClick={() => handleSort('sentiment')}
                   >
-                    Sentiment {sortField === 'sentiment' && (sortDirection === 'asc' ? '↑' : '↓')}
+                    Sentiment{' '}
+                    <SortChevron
+                      field="sentiment"
+                      currentSortField={sortField}
+                      currentSortDirection={sortDirection}
+                      onSort={(field, direction) => {
+                        setSortField(field);
+                        setSortDirection(direction);
+                      }}
+                    />
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {textResponses.map((item) => {
+                {textResponses.map((item, index) => {
                   const sentimentScore = item.sentiment ?? 0.5;
                   const sentimentLabel =
                     sentimentScore >= 0.6 ? 'Positive' : sentimentScore < 0.4 ? 'Negative' : 'Neutral';
@@ -338,12 +425,15 @@ export const ReportsClient: React.FC = () => {
                   const surveyId = survey ? survey.id : null;
 
                   return (
-                    <tr key={item.id} style={{ background: '#fff' }}>
-                      <td style={{ padding: '0.5rem', border: '1px solid #ddd', color: '#000' }}>
+                    <tr
+                      key={item.id}
+                      style={{ background: index % 2 === 0 ? 'var(--theme-elevation-50)' : 'transparent' }}
+                    >
+                      <td style={{ padding: '1rem', color: '#fff' }}>
                         {respondentId ? (
                           <a
                             href={`/admin/collections/respondents/${respondentId}`}
-                            style={{ color: '#0066cc', textDecoration: 'underline' }}
+                            style={{ color: '#fff', textDecoration: 'underline' }}
                           >
                             {respondentEmail}
                           </a>
@@ -351,11 +441,11 @@ export const ReportsClient: React.FC = () => {
                           respondentEmail
                         )}
                       </td>
-                      <td style={{ padding: '0.5rem', border: '1px solid #ddd', color: '#000' }}>
+                      <td style={{ padding: '1rem', color: '#fff' }}>
                         {surveyId ? (
                           <a
                             href={`/admin/collections/surveys/${surveyId}`}
-                            style={{ color: '#0066cc', textDecoration: 'underline' }}
+                            style={{ color: '#fff', textDecoration: 'underline' }}
                           >
                             {surveyTitle}
                           </a>
@@ -363,39 +453,44 @@ export const ReportsClient: React.FC = () => {
                           surveyTitle
                         )}
                       </td>
-                      <td style={{ padding: '0.5rem', border: '1px solid #ddd', color: '#000' }}>
-                        <strong>
-                          {typeof item.question === 'object' && item.question.title
-                            ? item.question.title
-                            : item.questionSlug}
-                        </strong>{' '}
+                      <td style={{ padding: '1rem', color: '#fff' }}>
+                        {typeof item.question === 'object' && item.question.title
+                          ? item.question.title
+                          : item.questionSlug}{' '}
                         {typeof item.question === 'object' && item.question.id && (
                           <a
                             href={`/admin/collections/questions/${item.question.id}`}
-                            style={{ color: '#0066cc', textDecoration: 'underline', fontSize: '0.9em' }}
+                            style={{ color: '#fff', textDecoration: 'underline', fontSize: '0.9em' }}
                           >
                             [{item.question.id}]
                           </a>
                         )}
                       </td>
-                      <td style={{ padding: '0.5rem', border: '1px solid #ddd', color: '#000' }}>
+                      <td style={{ padding: '1rem', color: '#fff' }}>
                         {item.textValue}{' '}
                         <a
                           href={`/admin/collections/response-items/${item.id}`}
-                          style={{ color: '#0066cc', textDecoration: 'underline', fontSize: '0.9em' }}
+                          style={{ color: '#fff', textDecoration: 'underline', fontSize: '0.9em' }}
                         >
                           [{item.id}]
                         </a>
                       </td>
                       <td
                         style={{
-                          padding: '0.5rem',
-                          border: '1px solid #ddd',
-                          background: sentimentColor,
-                          fontWeight: 'bold',
-                          color: '#000',
+                          padding: '1rem',
+                          color: '#fff',
                         }}
                       >
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            width: '10px',
+                            height: '10px',
+                            borderRadius: '50%',
+                            background: sentimentColor,
+                            marginRight: '8px',
+                          }}
+                        ></span>
                         {sentimentLabel} ({sentimentScore.toFixed(2)})
                       </td>
                     </tr>
