@@ -261,7 +261,7 @@ export async function analyzeSentiment(payload: Payload, request: PayloadRequest
     });
 
     const response = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-4o',
       messages: [
         {
           role: 'system',
