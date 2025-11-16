@@ -11,8 +11,8 @@ export const ReportsView: React.FC<AdminViewServerProps> = ({ initPageResult, pa
 
   const steps: StepNavItem[] = [
     {
-      url: '/reports',
-      label: 'Reports',
+      url: '/sentiment-analysis',
+      label: 'Sentiment Analysis',
     },
   ];
 
@@ -28,7 +28,7 @@ export const ReportsView: React.FC<AdminViewServerProps> = ({ initPageResult, pa
     >
       <SetStepNav nav={steps} />
       <Gutter>
-        <h1 style={{ margin: '1rem 0 2rem' }}>Reports Dashboard</h1>
+        {/* <h1 style={{ margin: '1rem 0 2rem' }}>Reports Dashboard</h1> */}
         <ReportsClient />
       </Gutter>
     </DefaultTemplate>

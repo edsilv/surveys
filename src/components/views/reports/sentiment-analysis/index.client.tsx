@@ -200,7 +200,7 @@ export const ReportsClient: React.FC = () => {
 
   return (
     <div>
-      <h2>Sentiment Analysis Report</h2>
+      <h1 style={{ margin: '1rem 0 2rem' }}>Sentiment Analysis</h1>
 
       {textResponses.length === 0 ? (
         <div style={{ marginTop: '2rem', padding: '2rem', color: '#ffffffff' }}>

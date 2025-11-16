@@ -60,9 +60,9 @@ export const DefaultNavClient: React.FC<{
               }
 
               // Handle custom nav items
-              if (slug === 'reports' && !href) {
-                href = formatAdminURL({ adminRoute, path: `/reports` });
-                id = `nav-reports`;
+              if (slug === 'sentiment-analysis' && !href) {
+                href = formatAdminURL({ adminRoute, path: `/sentiment-analysis` });
+                id = `nav-sentiment-analysis`;
               }
 
               const isActive = pathname.startsWith(href) && ['/', undefined].includes(pathname[href.length]);

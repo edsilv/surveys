@@ -75,7 +75,7 @@ src/
 
 ## AI/ML Enhancement Opportunities
 
-### Sentiment Analysis
+### Sentiment Analysis ✅
 
 Analyse open-text responses to automatically gauge emotional tone (positive, negative, neutral). This would enable administrators to:
 
@@ -98,5 +98,3 @@ Provide a chatbot interface allowing administrators to query survey data using n
 - "What were the most common complaints in the last employee survey?"
 - "Show me all responses from users who rated us below 3 stars"
 - "Summarise the feedback from the London office"
-
-The queryable database structure (individual ResponseItems records) makes this particularly feasible, as complex SQL queries can be generated from natural language inputs and executed against the normalised schema.

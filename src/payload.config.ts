@@ -55,9 +55,9 @@ export default buildConfig({
     components: {
       Nav: '@/components/nav/index.tsx',
       views: {
-        reports: {
-          Component: '@/components/views/reports/index.tsx',
-          path: '/reports',
+        'sentiment-analysis': {
+          Component: '@/components/views/reports/sentiment-analysis/index.tsx',
+          path: '/sentiment-analysis',
         },
       },
     },

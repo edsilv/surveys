@@ -79,8 +79,8 @@ export const DefaultNav: React.FC<NavProps> = async (props) => {
       {
         // @ts-expect-error - Custom nav item type
         type: 'custom',
-        slug: 'reports',
-        label: 'Reports',
+        slug: 'sentiment-analysis',
+        label: 'Sentiment Analysis',
       },
     ],
   });
