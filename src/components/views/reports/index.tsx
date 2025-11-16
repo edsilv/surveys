@@ -2,6 +2,7 @@ import React from 'react';
 import { DefaultTemplate } from '@payloadcms/next/templates';
 import { Gutter, SetStepNav, type StepNavItem } from '@payloadcms/ui';
 import type { AdminViewServerProps } from 'payload';
+import { ReportsClient } from './index.client';
 
 export const ReportsView: React.FC<AdminViewServerProps> = ({ initPageResult, params }: AdminViewServerProps) => {
   if (!initPageResult.req.user) {
@@ -28,6 +29,7 @@ export const ReportsView: React.FC<AdminViewServerProps> = ({ initPageResult, pa
       <SetStepNav nav={steps} />
       <Gutter>
         <h1 style={{ margin: '1rem 0 2rem' }}>Reports Dashboard</h1>
+        <ReportsClient />
       </Gutter>
     </DefaultTemplate>
   );
