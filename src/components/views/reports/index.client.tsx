@@ -40,10 +40,24 @@ interface ResponseItem {
   updatedAt: string;
 }
 
+type SortField = 'member' | 'survey' | 'question' | 'sentiment';
+type SortDirection = 'asc' | 'desc';
+
 export const ReportsClient: React.FC = () => {
   const [responseItems, setResponseItems] = useState<ResponseItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sortField, setSortField] = useState<SortField>('sentiment');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
 
   useEffect(() => {
     const fetchResponseItems = async () => {
@@ -78,9 +92,44 @@ export const ReportsClient: React.FC = () => {
     return <div>Error: {error}</div>;
   }
 
-  const textResponses = responseItems.filter(
-    (item) => item.textValue && item.questionType === 'textarea' && item.sentiment !== undefined,
-  );
+  const textResponses = responseItems
+    .filter((item) => item.textValue && item.questionType === 'textarea' && item.sentiment !== undefined)
+    .sort((a, b) => {
+      let compareValue = 0;
+
+      if (sortField === 'member') {
+        const memberA =
+          typeof a.surveyResponse === 'object' && typeof a.surveyResponse.member === 'object'
+            ? a.surveyResponse.member.email
+            : '';
+        const memberB =
+          typeof b.surveyResponse === 'object' && typeof b.surveyResponse.member === 'object'
+            ? b.surveyResponse.member.email
+            : '';
+        compareValue = memberA.localeCompare(memberB);
+      } else if (sortField === 'survey') {
+        const surveyA =
+          typeof a.surveyResponse === 'object' && typeof a.surveyResponse.survey === 'object'
+            ? a.surveyResponse.survey.title
+            : '';
+        const surveyB =
+          typeof b.surveyResponse === 'object' && typeof b.surveyResponse.survey === 'object'
+            ? b.surveyResponse.survey.title
+            : '';
+        compareValue = surveyA.localeCompare(surveyB);
+      } else if (sortField === 'question') {
+        const questionA = typeof a.question === 'object' && a.question.title ? a.question.title : a.questionSlug;
+        const questionB = typeof b.question === 'object' && b.question.title ? b.question.title : b.questionSlug;
+        compareValue = questionA.localeCompare(questionB);
+      } else if (sortField === 'sentiment') {
+        const sentimentA = a.sentiment ?? 0.5;
+        const sentimentB = b.sentiment ?? 0.5;
+        compareValue = sentimentA - sentimentB;
+      }
+
+      return sortDirection === 'asc' ? compareValue : -compareValue;
+    });
+
   const positiveSentiments = textResponses.filter((item) => item.sentiment && item.sentiment >= 0.6).length;
   const negativeSentiments = textResponses.filter(
     (item) => item.sentiment !== undefined && item.sentiment < 0.4,
@@ -139,16 +188,60 @@ export const ReportsClient: React.FC = () => {
         <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem', background: '#fff' }}>
           <thead>
             <tr style={{ background: '#000' }}>
-              <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>Member</th>
-              <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>Survey</th>
-              <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>
-                Question
+              <th
+                style={{
+                  padding: '0.5rem',
+                  textAlign: 'left',
+                  border: '1px solid #ddd',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                }}
+                onClick={() => handleSort('member')}
+              >
+                Member {sortField === 'member' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
+              <th
+                style={{
+                  padding: '0.5rem',
+                  textAlign: 'left',
+                  border: '1px solid #ddd',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                }}
+                onClick={() => handleSort('survey')}
+              >
+                Survey {sortField === 'survey' && (sortDirection === 'asc' ? '↑' : '↓')}
+              </th>
+              <th
+                style={{
+                  padding: '0.5rem',
+                  textAlign: 'left',
+                  border: '1px solid #ddd',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                }}
+                onClick={() => handleSort('question')}
+              >
+                Question {sortField === 'question' && (sortDirection === 'asc' ? '↑' : '↓')}
               </th>
               <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>
                 Response
               </th>
-              <th style={{ padding: '0.5rem', textAlign: 'left', border: '1px solid #ddd', color: '#fff' }}>
-                Sentiment
+              <th
+                style={{
+                  padding: '0.5rem',
+                  textAlign: 'left',
+                  border: '1px solid #ddd',
+                  color: '#fff',
+                  cursor: 'pointer',
+                  userSelect: 'none',
+                }}
+                onClick={() => handleSort('sentiment')}
+              >
+                Sentiment {sortField === 'sentiment' && (sortDirection === 'asc' ? '↑' : '↓')}
               </th>
             </tr>
           </thead>
