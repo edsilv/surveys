@@ -26,15 +26,14 @@ A full-stack survey application built with Payload CMS, Next.js, and PostgreSQL.
 - **Frontend**: Next.js 15, React, TypeScript, Redux Toolkit, Tailwind CSS, shadcn/ui
 - **Backend**: Payload CMS 3, Node.js
 - **Database**: PostgreSQL (Vercel/Neon)
-- **Storage**: Vercel Blob
 - **Deployment**: Vercel
 
 ## Architecture Highlights
 
 ### Data Model
 
-- **Collections**: Users, Members, Questions, Surveys, SurveyResponses, ResponseItems
-- **Relationships**: Surveys link to Questions, Members receive survey invitations, responses are stored as queryable items
+- **Collections**: Users, Respondents, Questions, Surveys, SurveyResponses, ResponseItems
+- **Relationships**: Surveys link to Questions, Respondents receive survey invitations, responses are stored as queryable items
 - **Schema Evolution**: Migration support for production environments with push mode for local development
 
 ### Custom Endpoints
@@ -64,7 +63,7 @@ src/
 │   ├── Surveys.ts               # Survey configuration
 │   ├── SurveyResponses.ts       # Response metadata
 │   ├── ResponseItems.ts         # Individual queryable answers
-│   └── Members.ts               # Member authentication
+│   └── Respondents.ts           # Respondent authentication
 ├── endpoints/                   # Custom API endpoints
 │   └── surveyEndpoints.ts       # Survey retrieval & submission logic
 ├── store/                       # Redux state management
