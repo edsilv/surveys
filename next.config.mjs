@@ -11,6 +11,12 @@ const nextConfig = {
       '.mjs': ['.mts', '.mjs'],
     };
 
+    // Exclude test files from node_modules
+    webpackConfig.module.rules.push({
+      test: /node_modules.*\/test\//,
+      use: 'null-loader',
+    });
+
     return webpackConfig;
   },
 };
