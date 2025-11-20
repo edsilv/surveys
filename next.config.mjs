@@ -4,24 +4,17 @@ import { withPayload } from '@payloadcms/next/withPayload';
 const nextConfig = {
   // Your Next.js config here
   cacheComponents: true,
-  webpack: (config, { isServer }) => {
-    const webpack = require('webpack');
-
-    // Replace thread-stream test files with empty module
+  webpack: (config, { webpack }) => {
+    // Ignore thread-stream test directory completely
     config.plugins.push(
-      new webpack.NormalModuleReplacementPlugin(
-        /thread-stream[/\\]test[/\\]/,
-        require.resolve('./src/lib/empty-module.js'),
-      ),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^tap$|^why-is-node-running$|^pino-elasticsearch$/,
+      }),
+      new webpack.IgnorePlugin({
+        resourceRegExp: /\/test\//,
+        contextRegExp: /thread-stream/,
+      }),
     );
-
-    // Provide empty implementations for test dependencies
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      tap: false,
-      'why-is-node-running': false,
-      'pino-elasticsearch': false,
-    };
 
     return config;
   },
