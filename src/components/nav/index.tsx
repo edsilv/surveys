@@ -6,15 +6,15 @@ import { RenderServerComponent } from '@payloadcms/ui/elements/RenderServerCompo
 import { EntityType, groupNavItems } from '@payloadcms/ui/shared';
 import React from 'react';
 
-import { NavHamburger } from './NavHamburger/index.js';
-import { NavWrapper } from './NavWrapper/index.js';
-import { SettingsMenuButton } from './SettingsMenuButton/index.js';
+import { NavHamburger } from './NavHamburger/index';
+import { NavWrapper } from './NavWrapper/index';
+import { SettingsMenuButton } from './SettingsMenuButton/index';
 import './index.scss';
 
 const baseClass = 'nav';
 
-import { getNavPrefs } from './getNavPrefs.js';
-import { DefaultNavClient } from './index.client.js';
+import { getNavPrefs } from './getNavPrefs';
+import { DefaultNavClient } from './index.client';
 
 export type NavProps = {
   req?: PayloadRequest;

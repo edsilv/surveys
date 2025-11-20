@@ -40,6 +40,12 @@ https://youtu.be/s3-qnSF83NY
 - **Relationships**: Surveys link to Questions, Respondents receive survey invitations, responses are stored as queryable items
 - **Schema Evolution**: Migration support for production environments with push mode for local development
 
+### Performance Optimization
+
+- **Next.js Cache Components**: Sentiment analysis dashboard uses `use cache` directive with hourly expiration
+- **Automatic Invalidation**: Cache tags enable on-demand revalidation when new responses are created
+- **Server/Client Split**: Server components fetch cached data, client components handle interactivity
+
 ### Custom Endpoints
 
 - `GET /api/surveys/:id` - Fetch survey with member authorisation check
@@ -80,11 +86,14 @@ src/
 
 ### Sentiment Analysis ✅
 
-Analyse open-text responses to automatically gauge emotional tone (positive, negative, neutral). This would enable administrators to:
+Analyse open-text responses to automatically gauge emotional tone (positive, negative, neutral). This enables administrators to:
 
 - Quickly identify concerning or highly positive feedback requiring immediate attention
 - Track sentiment trends across different survey periods or demographic groups
 - Prioritise responses for manual review based on sentiment scores
+- View interactive analytics with pie charts, sortable tables, and filtering by survey
+
+**Caching Implementation**: Sentiment data queries use Next.js 16's `use cache` directive with hourly cache expiration and automatic invalidation when new responses are created. Cache is tagged for granular revalidation using `revalidateTag()`.
 
 ### Theme Extraction
 

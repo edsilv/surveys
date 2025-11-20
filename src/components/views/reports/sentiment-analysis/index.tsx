@@ -3,11 +3,14 @@ import { DefaultTemplate } from '@payloadcms/next/templates';
 import { Gutter, SetStepNav, type StepNavItem } from '@payloadcms/ui';
 import type { AdminViewServerProps } from 'payload';
 import { ReportsClient } from './index.client';
+import { getSentimentData, getSurveyList } from '@/lib/getSentimentData';
 
-export const ReportsView: React.FC<AdminViewServerProps> = ({ initPageResult, params }: AdminViewServerProps) => {
+export const ReportsView: React.FC<AdminViewServerProps> = async ({ initPageResult, params }: AdminViewServerProps) => {
   if (!initPageResult.req.user) {
     return <div>You must be logged in to view this page.</div>;
   }
+
+  const [responses, surveys] = await Promise.all([getSentimentData(), getSurveyList()]);
 
   const steps: StepNavItem[] = [
     {
@@ -29,7 +32,7 @@ export const ReportsView: React.FC<AdminViewServerProps> = ({ initPageResult, pa
       <SetStepNav nav={steps} />
       <Gutter>
         {/* <h1 style={{ margin: '1rem 0 2rem' }}>Reports Dashboard</h1> */}
-        <ReportsClient />
+        <ReportsClient initialResponses={responses} initialSurveys={surveys} />
       </Gutter>
     </DefaultTemplate>
   );
