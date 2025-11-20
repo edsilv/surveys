@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload';
 import { analyseSentiment } from '../lib/ai';
+import { revalidateTag } from 'next/cache';
 
 export const ResponseItems: CollectionConfig = {
   slug: 'response-items',
@@ -23,6 +24,16 @@ export const ResponseItems: CollectionConfig = {
           }
         }
         return data;
+      },
+    ],
+    afterChange: [
+      async ({ doc }) => {
+        // console.log('ResponseItem created/updated with ID:', doc);
+        // Revalidate sentiment analysis cache when new textarea response with sentiment is created
+        if (doc.questionType === 'textarea' && doc.sentiment !== undefined && doc.sentiment !== null) {
+          console.log('Revalidating sentiment-analysis cache for ResponseItem ID:', doc.id);
+          revalidateTag('sentiment-analysis', 'max');
+        }
       },
     ],
   },

@@ -11,7 +11,6 @@ const Template: FC<LayoutProps> = async ({ children }) => {
   const user = await getUser();
   if (!user) {
     redirect('/login');
-    return null;
   }
   return (
     <div>

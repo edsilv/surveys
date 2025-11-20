@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import React from 'react';
+import type { ResponseItem as ResponseItemType } from '@/payload-types';
 
 interface ChevronIconProps {
   direction: 'up' | 'down';
@@ -69,103 +70,20 @@ const SortChevron: React.FC<SortChevronProps> = ({ field, currentSortField, curr
   );
 };
 
-interface ResponseItem {
-  id: string;
-  surveyResponse:
-    | string
-    | {
-        id: string;
-        survey:
-          | string
-          | {
-              id: string | number;
-              title: string;
-            };
-        respondent:
-          | string
-          | {
-              id: string | number;
-              email: string;
-            };
-      };
-  question:
-    | string
-    | {
-        id: string | number;
-        title: string;
-        slug: string;
-      };
-  questionSlug: string;
-  questionType: string;
-  textValue?: string;
-  numberValue?: number;
-  booleanValue?: boolean;
-  arrayValue?: Array<{ value: string }>;
-  sentiment?: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
 type SortField = 'respondent' | 'question' | 'sentiment';
 type SortDirection = 'asc' | 'desc';
 
-export const ReportsClient: React.FC = () => {
-  const [responseItems, setResponseItems] = useState<ResponseItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface ReportsClientProps {
+  initialResponses: ResponseItemType[];
+  initialSurveys: Array<{ id: number; title: string }>;
+}
+
+export const ReportsClient: React.FC<ReportsClientProps> = ({ initialResponses, initialSurveys }) => {
   const [sortField, setSortField] = useState<SortField>('sentiment');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [selectedSurvey, setSelectedSurvey] = useState<string>('all');
 
-  useEffect(() => {
-    const fetchResponseItems = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch('/api/response-items?limit=1000&depth=2', {
-          credentials: 'include',
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch response items');
-        }
-
-        const data = await response.json();
-        const items = data.docs || [];
-        setResponseItems(items);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchResponseItems();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  // Get unique surveys for the filter dropdown
-  const surveys = Array.from(
-    new Map(
-      responseItems
-        .map((item) => {
-          if (typeof item.surveyResponse === 'object' && typeof item.surveyResponse.survey === 'object') {
-            return item.surveyResponse.survey;
-          }
-          return null;
-        })
-        .filter((survey): survey is { id: string | number; title: string } => survey !== null)
-        .map((survey) => [survey.id.toString(), survey]),
-    ).values(),
-  );
-
-  const textResponses = responseItems
+  const textResponses = initialResponses
     .filter((item) => {
       // Filter by textarea with sentiment
       if (!item.textValue || item.questionType !== 'textarea' || item.sentiment === undefined) {
@@ -213,10 +131,10 @@ export const ReportsClient: React.FC = () => {
 
   const positiveSentiments = textResponses.filter((item) => item.sentiment && item.sentiment >= 0.6).length;
   const negativeSentiments = textResponses.filter(
-    (item) => item.sentiment !== undefined && item.sentiment < 0.4,
+    (item) => item.sentiment !== undefined && item.sentiment !== null && item.sentiment < 0.4,
   ).length;
   const neutralSentiments = textResponses.filter(
-    (item) => item.sentiment !== undefined && item.sentiment >= 0.4 && item.sentiment < 0.6,
+    (item) => item.sentiment !== undefined && item.sentiment !== null && item.sentiment >= 0.4 && item.sentiment < 0.6,
   ).length;
 
   // Calculate pie chart segments
@@ -285,7 +203,7 @@ export const ReportsClient: React.FC = () => {
                 }}
               >
                 <option value="all">All Surveys</option>
-                {surveys.map((survey) => (
+                {initialSurveys.map((survey) => (
                   <option key={survey.id} value={survey.id.toString()}>
                     {survey.title}
                   </option>
