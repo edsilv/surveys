@@ -8,6 +8,8 @@ overrides:
   '@types/react': 19.2.6
   '@types/react-dom': 19.2.3
 
+packageExtensionsChecksum: d1378fe338ff6201ebec945946f28e87
+
 importers:
 
   .:
@@ -3965,6 +3967,14 @@ packages:
 
   thread-stream@3.1.0:
     resolution: {integrity: sha512-OqyPZ9u96VohAyMfJykzmivOrY2wfMSf3C5TtFJVgN+Hm6aj+voFhlK+kZEIv2FBh1X6Xp3DlnCOfEQ3B2J86A==}
+    peerDependencies:
+      tap: '*'
+      why-is-node-running: '*'
+    peerDependenciesMeta:
+      tap:
+        optional: true
+      why-is-node-running:
+        optional: true
 
   tinyglobby@0.2.15:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
@@ -7773,8 +7783,10 @@ snapshots:
       ws: 8.18.3(bufferutil@4.0.9)(utf-8-validate@6.0.5)
     transitivePeerDependencies:
       - bufferutil
+      - tap
       - typescript
       - utf-8-validate
+      - why-is-node-running
 
   peek-readable@5.4.2: {}
 
@@ -7866,6 +7878,9 @@ snapshots:
       safe-stable-stringify: 2.5.0
       sonic-boom: 4.2.0
       thread-stream: 3.1.0
+    transitivePeerDependencies:
+      - tap
+      - why-is-node-running
 
   playwright-core@1.56.1:
     optional: true
