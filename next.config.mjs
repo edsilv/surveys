@@ -5,13 +5,23 @@ const nextConfig = {
   // Your Next.js config here
   cacheComponents: true,
   webpack: (config, { isServer }) => {
-    // Completely ignore thread-stream test files
+    const webpack = require('webpack');
+
+    // Replace thread-stream test files with empty module
     config.plugins.push(
-      new (require('webpack').NormalModuleReplacementPlugin)(
-        /thread-stream\/test\//,
+      new webpack.NormalModuleReplacementPlugin(
+        /thread-stream[/\\]test[/\\]/,
         require.resolve('./src/lib/empty-module.js'),
       ),
     );
+
+    // Provide empty implementations for test dependencies
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      tap: false,
+      'why-is-node-running': false,
+      'pino-elasticsearch': false,
+    };
 
     return config;
   },
